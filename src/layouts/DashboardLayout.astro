@@ -1,0 +1,100 @@
+---
+import '../styles/globals.css';
+import Logo from '../components/Logo.astro';
+import { checkAuth } from '../lib/auth';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'GalNetOps' } = Astro.props;
+const auth = await checkAuth(Astro);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="GalNetOps - Elite Dangerous Commander Dashboard" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="flex flex-col h-screen">
+      <!-- Top Navigation Bar -->
+      <header class="h-16 bg-bg-primary border-b border-border flex items-center justify-between px-6">
+        <Logo />
+        <div class="flex items-center gap-4">
+          {auth.isAuthenticated && auth.user ? (
+            <>
+              <span class="text-text-secondary text-sm">
+                {auth.user.commanderName}
+              </span>
+              <form method="POST" action="/api/auth/logout">
+                <button
+                  type="submit"
+                  class="px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors text-sm"
+                >
+                  Logout
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <a
+                href="/login"
+                class="px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors text-sm"
+              >
+                Login
+              </a>
+              <a
+                href="/register"
+                class="px-4 py-2 text-accent hover:text-accent-soft transition-colors text-sm"
+              >
+                Sign Up
+              </a>
+            </>
+          )}
+        </div>
+      </header>
+
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-bg-secondary border-r border-border">
+          <nav class="p-4">
+            <ul class="space-y-1">
+              <li>
+                <a href="/" class="block px-4 py-2 text-text-primary hover:text-accent-soft transition-colors border-l-4 border-accent bg-bg-primary">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
+                  Commanders
+                </a>
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
+                  Systems
+                </a>
+              </li>
+              <li>
+                <a href="#" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
+                  Analytics
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-bg-primary">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
+

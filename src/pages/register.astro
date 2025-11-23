@@ -1,0 +1,109 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Button from '../components/Button.astro';
+
+const url = Astro.url;
+const errorParam = url.searchParams.get('error');
+const successParam = url.searchParams.get('success');
+---
+
+<DashboardLayout title="Create Account - GalNetOps">
+  <div class="p-6 max-w-md mx-auto">
+    <div class="mb-8">
+      <h1>Create Account</h1>
+      <p class="text-text-secondary mt-2">
+        Create your GalNetOps account to get started.
+      </p>
+    </div>
+
+    {errorParam && (
+      <div class="card border-red-500 mb-6">
+        <h3 class="text-red-400 mb-2">Error</h3>
+        <p class="text-text-secondary">{decodeURIComponent(errorParam)}</p>
+      </div>
+    )}
+
+    {successParam && (
+      <div class="card border-accent mb-6">
+        <h3 class="text-accent mb-2">Account Created</h3>
+        <p class="text-text-secondary mb-4">Your account has been created successfully!</p>
+        <Button variant="primary" href="/login">Go to Login</Button>
+      </div>
+    )}
+
+    {!successParam && (
+      <div class="card">
+        <form method="POST" action="/api/auth/register" class="space-y-4">
+          <div>
+            <label for="email" class="block mb-2">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-2 bg-bg-primary border border-border rounded-button text-text-primary focus:outline-none focus:border-accent"
+              placeholder="your.email@example.com"
+            />
+          </div>
+
+          <div>
+            <label for="username" class="block mb-2">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              minlength="3"
+              maxlength="20"
+              pattern="[a-zA-Z0-9_-]+"
+              class="w-full px-4 py-2 bg-bg-primary border border-border rounded-button text-text-primary focus:outline-none focus:border-accent"
+              placeholder="username"
+            />
+            <p class="text-text-secondary text-sm mt-1">
+              Letters, numbers, underscores, and hyphens only
+            </p>
+          </div>
+
+          <div>
+            <label for="password" class="block mb-2">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              minlength="8"
+              class="w-full px-4 py-2 bg-bg-primary border border-border rounded-button text-text-primary focus:outline-none focus:border-accent"
+              placeholder="••••••••"
+            />
+            <p class="text-text-secondary text-sm mt-1">
+              At least 8 characters with uppercase, lowercase, and number
+            </p>
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="block mb-2">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              minlength="8"
+              class="w-full px-4 py-2 bg-bg-primary border border-border rounded-button text-text-primary focus:outline-none focus:border-accent"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <Button variant="primary" type="submit">
+              Create Account
+            </Button>
+            <Button variant="secondary" href="/login" type="button">
+              Already have an account?
+            </Button>
+          </div>
+        </form>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+

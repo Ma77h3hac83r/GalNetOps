@@ -1,0 +1,93 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import Button from '../../components/Button.astro';
+import { getCAPIConfig, getAuthorizationUrl } from '../../lib/capi';
+import { checkAuth } from '../../lib/auth';
+
+const url = Astro.url;
+const searchParams = url.searchParams;
+const errorParam = searchParams.get('error');
+
+// Check if user is logged in
+const auth = await checkAuth(Astro);
+
+let authUrl = '#';
+let configError = '';
+
+try {
+  const config = getCAPIConfig(Astro);
+  const state = crypto.randomUUID();
+  authUrl = getAuthorizationUrl(config, state);
+} catch (err) {
+  configError = err instanceof Error ? err.message : 'Failed to initialize authentication';
+}
+---
+
+<DashboardLayout title="Link ED Account - GalNetOps">
+  <div class="p-6 max-w-2xl mx-auto">
+    <div class="mb-8">
+      <h1>Link Elite Dangerous Account</h1>
+      <p class="text-text-secondary mt-2">
+        Connect your Elite Dangerous account to access your commander data and statistics.
+      </p>
+    </div>
+
+    {!auth.isAuthenticated && (
+      <div class="card border-accent mb-6">
+        <h3 class="text-accent mb-2">Login Required</h3>
+        <p class="text-text-secondary mb-4">
+          You must be logged in to your GalNetOps account to link your Elite Dangerous account.
+        </p>
+        <div class="flex gap-3">
+          <Button variant="primary" href="/login">Login</Button>
+          <Button variant="secondary" href="/register">Create Account</Button>
+        </div>
+      </div>
+    )}
+
+    {configError ? (
+      <div class="card border-red-500">
+        <h3 class="text-red-400 mb-2">Configuration Error</h3>
+        <p class="text-text-secondary">{configError}</p>
+        <p class="text-text-secondary text-sm mt-4">
+          Please ensure ED CAPI credentials are configured in your environment variables.
+        </p>
+      </div>
+    ) : errorParam ? (
+      <div class="card border-red-500 mb-6">
+        <h3 class="text-red-400 mb-2">Linking Error</h3>
+        <p class="text-text-secondary">{decodeURIComponent(errorParam)}</p>
+      </div>
+    ) : null}
+
+    {auth.isAuthenticated && !configError && (
+      <div class="card">
+        <h3 class="mb-4">How it works</h3>
+        <ol class="list-decimal list-inside space-y-3 text-text-secondary mb-6">
+          <li>Click the button below to authorize GalNetOps</li>
+          <li>You'll be redirected to Frontier Developments' login page</li>
+          <li>Sign in with your Elite Dangerous account credentials</li>
+          <li>Grant permission for GalNetOps to access your commander data</li>
+          <li>You'll be redirected back to complete the linking</li>
+        </ol>
+
+        <div class="flex gap-3">
+          <Button variant="primary" href={authUrl}>
+            Link ED Account
+          </Button>
+          <Button variant="secondary" href="/">
+            Cancel
+          </Button>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-border">
+          <p class="text-text-secondary text-sm">
+            <strong class="text-text-primary">Note:</strong> You must have an existing Elite Dangerous account 
+            registered with Frontier Developments. GalNetOps cannot create new ED accounts.
+          </p>
+        </div>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+

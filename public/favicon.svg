@@ -1,0 +1,19 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" fill="#0F131A"/>
+  <!-- Connection Arc -->
+  <path
+    d="M 8 20 Q 16 12, 24 20"
+    stroke="#4D9FFF"
+    stroke-width="2"
+    fill="none"
+    stroke-linecap="round"
+  />
+  <!-- Node 1 -->
+  <circle cx="8" cy="20" r="3.5" fill="#4D9FFF" />
+  <!-- Node 2 -->
+  <circle cx="24" cy="20" r="3.5" fill="#4D9FFF" />
+  <!-- Node 3 -->
+  <circle cx="16" cy="10" r="3" fill="#4D9FFF" />
+</svg>
+

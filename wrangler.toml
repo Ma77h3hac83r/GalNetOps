@@ -1,0 +1,16 @@
+name = "galnetops-dashboard"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+# KV Namespace for user storage
+# Create this in Cloudflare Dashboard: Workers & Pages > KV > Create a namespace
+# Then bind it here. For local dev, use: wrangler kv:namespace create "USERS"
+[[kv_namespaces]]
+binding = "USERS"
+id = "bd48c579c7814b009f8ce62a765abcb5"
+
+# Environment variables (set these in Cloudflare Dashboard)
+# For local dev, use: wrangler dev --env .env
+[vars]
+# These will be overridden by Cloudflare Dashboard environment variables
+

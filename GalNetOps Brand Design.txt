@@ -1,0 +1,108 @@
+GalNetOps — Brand Design System
+
+1. Brand Identity Summary
+GalNetOps is a fast, modern, space-data platform for Elite Dangerous pilots. The UI leans into a premium sci-fi navigation aesthetic without using ED’s orange/black theme. Everything is optimized for clarity in data-dense layouts.
+
+Personality:
+- precise
+- technological
+- reliable
+- galactic navigation
+- operations + intelligence
+
+2. Logo System
+Primary Logo Mark: “Galactic Network Node”
+Structure:
+- 3–5 nodes (circles) connected by 1–2 arcs/segments
+- asymmetrical arrangement to imply motion + network topology
+- thin line weight (1.5–2.0 px at 24–32px icon sizes)
+- nodes are slightly larger than the line width to pop visually
+- all strokes use accent blue (#4D9FFF)
+
+Primary Lockup:
+[LOGO MARK] GalNetOps
+- “GalNetOps” set in Lexend SemiBold
+- Logo mark height = text cap height × 0.9
+
+Favicon / App Icon:
+- simplified node version
+- 3 nodes + 1 curved arc
+- accent blue (#4D9FFF) on dark background (#0F131A)
+
+3. Color System (Palette B — Azure Ops)
+Primary Palette (Dark Mode):
+Background Primary: #0F131A
+Background Secondary: #1A1F27
+Primary Accent: #4D9FFF
+Accent Soft: #8AC0FF
+Text Primary: #F0F3F6
+Text Secondary: #8C939C
+Borders / Dividers: #202530
+
+4. Typography System — Lexend
+Weights:
+- SemiBold: H1, H2
+- Medium: H3, H4, buttons
+- Regular: body text, table content
+- Light: secondary labels, metadata
+
+Hierarchy:
+H1: 32px, SemiBold
+H2: 24px, SemiBold
+H3: 18px, Medium
+Body: 15–16px, Regular
+Labels: 13–14px, Light
+
+5. Dashboard Layout System
+Top Navigation Bar:
+- Height: 64px
+- Background: #0F131A
+- Border bottom: 1px solid #202530
+
+Sidebar:
+- Width: 240–260px
+- Background: #1A1F27
+- Active item: #4D9FFF with 3–4px left accent bar
+
+Cards:
+- Background: #1A1F27
+- Border: 1px #202530
+- Radius: 8px
+- Padding: 20–24px
+
+Highlight Card:
+- 1px border #4D9FFF
+
+6. Iconography System
+All icons follow the Galactic Network Node language:
+- nodes = solid circles
+- connections = thin curves
+
+Default: #8C939C
+Active: #4D9FFF
+Hover: #8AC0FF
+
+7. Components
+Primary Button:
+- Background: #4D9FFF
+- Text: #0F131A
+- Radius: 6px
+
+Secondary Button:
+- Border: 1px #4D9FFF
+- Text: #4D9FFF
+
+8. Data Tables
+- Row height: 44–48px
+- Hover background: #1F2732
+- Header: Lexend Medium 13–14px, #8C939C
+
+9. Charts
+Primary line: #4D9FFF
+Secondary line: #8AC0FF
+Grid: #202530
+
+10. Tone
+- Direct
+- Analytical
+- Mission-focused

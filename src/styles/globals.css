@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-sans;
+    font-family: 'Lexend', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  h1 {
+    @apply text-h1 font-semibold text-text-primary;
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  h2 {
+    @apply text-h2 font-semibold text-text-primary;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  h3 {
+    @apply text-h3 font-medium text-text-primary;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  h4 {
+    @apply text-base font-medium text-text-primary;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  p {
+    @apply text-body text-text-primary;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  label {
+    @apply text-label font-light text-text-secondary;
+    font-size: 13px;
+    font-weight: 300;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-bg-secondary border border-border rounded-card p-5;
+    padding: 20px;
+  }
+
+  .card-highlight {
+    @apply card border-accent;
+  }
+}
+

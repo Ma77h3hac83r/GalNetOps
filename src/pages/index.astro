@@ -1,0 +1,152 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Button from '../components/Button.astro';
+import { checkAuth } from '../lib/auth';
+import { getUserById } from '../lib/users';
+
+const auth = await checkAuth(Astro);
+const url = Astro.url;
+const linkedParam = url.searchParams.get('linked');
+let userProfile = null;
+
+if (auth.isAuthenticated && auth.user) {
+  const user = await getUserById(auth.user.id, Astro);
+  userProfile = user;
+}
+---
+
+<DashboardLayout title="GalNetOps - Home">
+  <div class="p-6 space-y-6">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1>Commander Dashboard</h1>
+      <p class="text-text-secondary mt-2">Overview of Elite Dangerous commander data and operations</p>
+    </div>
+
+    {linkedParam === 'true' && (
+      <div class="card border-accent mb-6">
+        <h3 class="text-accent mb-2">Account Linked Successfully</h3>
+        <p class="text-text-secondary">Your Elite Dangerous account has been linked to your GalNetOps account.</p>
+      </div>
+    )}
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Stat Card 1 -->
+      <div class="card">
+        <label class="mb-1">Total Commanders</label>
+        <h2 class="mt-2">0</h2>
+        <p class="text-text-secondary text-sm mt-1">Registered pilots</p>
+      </div>
+
+      <!-- Stat Card 2 -->
+      <div class="card">
+        <label class="mb-1">Active Systems</label>
+        <h2 class="mt-2">0</h2>
+        <p class="text-text-secondary text-sm mt-1">Monitored locations</p>
+      </div>
+
+      <!-- Stat Card 3 -->
+      <div class="card">
+        <label class="mb-1">Recent Activity</label>
+        <h2 class="mt-2">0</h2>
+        <p class="text-text-secondary text-sm mt-1">Last 24 hours</p>
+      </div>
+
+      <!-- Stat Card 4 -->
+      <div class="card card-highlight">
+        <label class="mb-1">Network Status</label>
+        <h2 class="mt-2 text-accent">Online</h2>
+        <p class="text-text-secondary text-sm mt-1">All systems operational</p>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Commanders Card -->
+      <div class="card">
+        <h3 class="mb-4">Recent Commanders</h3>
+        <div class="space-y-3">
+          <div class="text-text-secondary text-sm">
+            No commander data available yet.
+          </div>
+        </div>
+        <div class="mt-4">
+          <Button variant="secondary" href="#">View All Commanders</Button>
+        </div>
+      </div>
+
+      <!-- System Activity Card -->
+      <div class="card">
+        <h3 class="mb-4">System Activity</h3>
+        <div class="space-y-3">
+          <div class="text-text-secondary text-sm">
+            No system activity data available yet.
+          </div>
+        </div>
+        <div class="mt-4">
+          <Button variant="secondary" href="#">View All Systems</Button>
+        </div>
+      </div>
+    </div>
+
+    {auth.isAuthenticated && userProfile ? (
+      userProfile.frontierId ? (
+        <!-- User Profile Card - ED Account Linked -->
+        <div class="card card-highlight">
+          <h3 class="mb-4">Your Commander Profile</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="mb-1">Commander Name</label>
+              <p class="text-text-primary font-medium">{userProfile.commanderName}</p>
+            </div>
+            {userProfile.profile?.credits !== undefined && (
+              <div>
+                <label class="mb-1">Credits</label>
+                <p class="text-text-primary font-medium">
+                  {userProfile.profile.credits.toLocaleString()} CR
+                </p>
+              </div>
+            )}
+            {userProfile.profile?.lastSystem && (
+              <div>
+                <label class="mb-1">Last System</label>
+                <p class="text-text-primary font-medium">{userProfile.profile.lastSystem}</p>
+              </div>
+            )}
+            {userProfile.profile?.lastStarport && (
+              <div>
+                <label class="mb-1">Last Starport</label>
+                <p class="text-text-primary font-medium">{userProfile.profile.lastStarport}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <!-- Link ED Account Card -->
+        <div class="card border-accent">
+          <h3 class="mb-4">Link Elite Dangerous Account</h3>
+          <p class="text-text-secondary mb-4">
+            Connect your Elite Dangerous account to view your commander data, credits, and statistics.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <Button variant="primary" href="/auth/link">Link ED Account</Button>
+          </div>
+        </div>
+      )
+    ) : (
+      <!-- Quick Actions -->
+      <div class="card">
+        <h3 class="mb-4">Get Started</h3>
+        <p class="text-text-secondary mb-4">
+          Create a GalNetOps account to get started. You can link your Elite Dangerous account later.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <Button variant="primary" href="/register">Create Account</Button>
+          <Button variant="secondary" href="/login">Login</Button>
+        </div>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+
