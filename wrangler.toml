@@ -2,16 +2,13 @@ name = "galnetops"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
-# KV Namespace for user storage
-# Create this in Cloudflare Dashboard: Workers & Pages > KV > Create a namespace
-# Then bind it here. For local dev, use: wrangler kv:namespace create "USERS"
-[[kv_namespaces]]
-binding = "USERS"
-id = "bd48c579c7814b009f8ce62a765abcb5"
-
-[[kv_namespaces]]
-binding = "SYSTEMS"
-id = "1970f565ab9f4598b87868aea1c8a702"
+# D1 Database for user and system storage
+# Create this in Cloudflare Dashboard: Workers & Pages > D1 > Create database
+# Then bind it here. For local dev, use: wrangler d1 create galnetops-db
+[[d1_databases]]
+binding = "DB"
+database_name = "galnetops-db"
+database_id = "da63a324-e8e4-4089-b424-024ba914483a"
 
 # Environment variables (set these in Cloudflare Dashboard)
 # For local dev, use: wrangler dev --env .env

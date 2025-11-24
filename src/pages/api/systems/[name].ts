@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getSystem } from '../../../lib/systems-kv';
+import { getSystem } from '../../../lib/systems-d1';
 
 export const GET: APIRoute = async (context) => {
   const systemName = context.params.name;

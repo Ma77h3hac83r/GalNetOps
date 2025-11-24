@@ -3,7 +3,7 @@
  * Handles FSSAllBodiesFound, Scan, FSSBodySignals, and other system-related events
  */
 
-import type { SystemData, Star, Planet, Moon, Biological } from './systems-kv';
+import type { SystemData, Star, Planet, Moon, Biological } from './systems-d1';
 
 export interface ParsedSystemData {
   [systemName: string]: SystemData;

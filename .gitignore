@@ -26,3 +26,6 @@ pnpm-debug.log*
 .vscode/
 .idea/
 
+# Random files
+DEPLOYMENT.md
+GalNetOps Brand Design.txt

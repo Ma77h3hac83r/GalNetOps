@@ -47,12 +47,30 @@ export const POST: APIRoute = async (context) => {
     // Hash password and create user
     // Pass Astro context for Cloudflare KV access
     const passwordHash = await hashPassword(password);
-    await createUser(email, username, passwordHash, context);
+    const user = await createUser(email, username, passwordHash, context);
+    
+    if (!user) {
+      throw new Error('Failed to create user account');
+    }
 
     return context.redirect('/register?success=true');
   } catch (error) {
     console.error('Registration error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Registration failed';
+    
+    // If it's a D1 database not available error, provide more helpful message
+    if (errorMessage.includes('D1 database not available')) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Database not configured. Please ensure D1 database is bound in Cloudflare Pages settings.' 
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    
     return context.redirect('/register?error=' + encodeURIComponent(errorMessage));
   }
 };

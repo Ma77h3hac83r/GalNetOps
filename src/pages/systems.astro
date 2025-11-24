@@ -2,7 +2,7 @@
 import DashboardLayout from '../layouts/DashboardLayout.astro';
 import Button from '../components/Button.astro';
 import { checkAuth } from '../lib/auth';
-import { getAllSystemNames } from '../lib/systems-kv';
+import { getAllSystemNames } from '../lib/systems-d1';
 
 const auth = await checkAuth(Astro);
 let systemNames: string[] = [];
@@ -13,7 +13,7 @@ try {
     systemNames = await getAllSystemNames(Astro);
   }
 } catch (error) {
-  // KV might not be available in dev, that's okay
+  // D1 database might not be available in dev, that's okay
   console.warn('Could not load system names:', error);
 }
 ---

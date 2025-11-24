@@ -67,7 +67,18 @@ function getKV(context?: any): KVNamespace | null {
     return context.env.USERS;
   }
   
+  // Try alternative paths for Cloudflare Pages
+  if (context?.runtime?.env?.USERS) {
+    return context.runtime.env.USERS;
+  }
+  
   // Development/local - KV not available
+  console.warn('KV storage not available. Context:', {
+    hasLocals: !!context?.locals,
+    hasRuntime: !!context?.locals?.runtime,
+    hasEnv: !!context?.locals?.runtime?.env,
+    hasUsers: !!context?.locals?.runtime?.env?.USERS,
+  });
   return null;
 }
 
@@ -75,13 +86,21 @@ function getKV(context?: any): KVNamespace | null {
  * Get all users from KV
  */
 async function getAllUsersFromKV(kv: KVNamespace): Promise<UserAccount[]> {
-  const list = await kv.list();
+  const list = await kv.list({ prefix: 'user:' });
   const users: UserAccount[] = [];
   
   for (const key of list.keys) {
-    const userData = await kv.get(key.name, 'json');
-    if (userData) {
-      users.push(userData as UserAccount);
+    // Only process keys that start with 'user:' (skip index keys)
+    if (key.name.startsWith('user:')) {
+      try {
+        const userData = await kv.get(key.name, 'json');
+        if (userData && typeof userData === 'object' && 'id' in userData) {
+          users.push(userData as UserAccount);
+        }
+      } catch (error) {
+        // Skip invalid entries
+        console.warn(`Failed to parse user data for key ${key.name}:`, error);
+      }
     }
   }
   
@@ -103,15 +122,18 @@ export async function createUser(
     throw new Error('KV storage not available. Make sure you are running in Cloudflare Workers runtime.');
   }
 
-  // Check if email or username already exists
-  const allUsers = await getAllUsersFromKV(kv);
-  for (const user of allUsers) {
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      throw new Error('Email already registered');
-    }
-    if (user.username.toLowerCase() === username.toLowerCase()) {
-      throw new Error('Username already taken');
-    }
+  // Check if email or username already exists using index keys
+  const emailKey = `email:${email.toLowerCase()}`;
+  const usernameKey = `username:${username.toLowerCase()}`;
+  
+  const existingEmailUserId = await kv.get(emailKey);
+  if (existingEmailUserId) {
+    throw new Error('Email already registered');
+  }
+  
+  const existingUsernameUserId = await kv.get(usernameKey);
+  if (existingUsernameUserId) {
+    throw new Error('Username already taken');
   }
 
   const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

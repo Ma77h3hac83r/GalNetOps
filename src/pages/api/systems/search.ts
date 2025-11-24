@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { searchSystems } from '../../../lib/systems-kv';
+import { searchSystems } from '../../../lib/systems-d1';
 
 export const GET: APIRoute = async (context) => {
   const url = new URL(context.request.url);

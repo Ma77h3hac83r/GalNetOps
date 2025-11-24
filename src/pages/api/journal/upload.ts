@@ -3,7 +3,7 @@ import { getSessionFromRequest } from '../../../lib/session';
 import { getUserById, updateUser } from '../../../lib/users';
 import { parseJournalFile } from '../../../lib/journal-parser';
 import { parseSystemDataFromJournal } from '../../../lib/journal-system-parser';
-import { storeSystem } from '../../../lib/systems-kv';
+import { storeSystem } from '../../../lib/systems-d1';
 
 export const POST: APIRoute = async (context) => {
   const session = getSessionFromRequest(context);

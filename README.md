@@ -1,81 +1,187 @@
-# GalNetOps Dashboard
+# GalNetOps
 
-A fast, modern, space-data platform for Elite Dangerous pilots.
+A fast, modern, space-data platform for Elite Dangerous pilots. Track your commander progress, manage your assets, and explore the galaxy with precision and clarity.
 
-## Development
+## About GalNetOps
 
-```bash
-npm install
-npm run dev
-```
+GalNetOps is designed for Elite Dangerous commanders who want a comprehensive view of their in-game data. Whether you're tracking your financial status, monitoring your ranks, or exploring discovered star systems, GalNetOps provides a clean, data-dense interface optimized for quick information access.
 
-## Build
+The platform combines data from multiple sources—your Elite Dangerous account via the Companion API and your local journal files—to give you a complete picture of your commander's journey through the galaxy.
 
-```bash
-npm run build
-```
+## Current Features
 
-## Tech Stack
+### Commander Dashboard
 
-- Astro (with Cloudflare adapter)
-- TailwindCSS
-- Lexend font family
-- Cloudflare Pages & Workers
-- Cloudflare KV (for user storage)
-- bcryptjs (password hashing)
+**Financial Overview**
+- View your current credit balance
+- Track outstanding debt
+- Calculate your net worth at a glance
 
-## User Account System
+**Location Tracking**
+- See your current star system
+- Check your last docked station or port
+- View your current planetary body
+- Display your active ship name, type, and identifier
 
-GalNetOps uses a two-step account system:
+**Ranks & Reputation**
+- Combat rank progression
+- Trade rank status
+- Explorer rank tracking
+- CQC (Close Quarters Combat) rank
+- Empire reputation and rank
+- Federation reputation and rank
 
-1. **Create a GalNetOps account** - Users register with email, username, and password
-2. **Link Elite Dangerous account** (optional) - Users can link their ED account via CAPI to access commander data
+**Commander Information**
+- In-game commander name
+- Account linking status
+- Platform information
 
-## Elite Dangerous CAPI Setup
+### Data Sources
 
-To enable ED account linking via the Elite Dangerous Companion API (CAPI), you need to:
+**Elite Dangerous Companion API (CAPI)**
+- Link your Frontier Developments account
+- Automatically sync commander data
+- Refresh data on demand
+- Access real-time credit balances and location
 
-1. **Register your application** with Frontier Developments:
-   - Visit https://www.frontierstore.net/account/api-access
-   - Create a new application
-   - Note your Client ID and Client Secret
+**Journal File Upload**
+- Upload your Elite Dangerous journal files
+- Extract commander data from local files
+- Track systems you've visited
+- Parse rank and progression information
 
-2. **Configure environment variables**:
-   Create a `.env` file in the project root:
-   ```env
-   ED_CAPI_CLIENT_ID=your_client_id_here
-   ED_CAPI_CLIENT_SECRET=your_client_secret_here
-   ED_CAPI_REDIRECT_URI=http://localhost:4321/api/auth/callback
-   SESSION_SECRET=your_random_session_secret_here
-   BASE_URL=http://localhost:4321
-   ```
+### System Exploration
 
-3. **Update redirect URI for production**:
-   When deploying, update `ED_CAPI_REDIRECT_URI` and `BASE_URL` to your production domain.
+**Star System Database**
+- Search discovered star systems
+- Autocomplete system names
+- View system information
+- Track systems from journal uploads
 
-**Note:** Users must create a GalNetOps account first, then they can optionally link their ED account.
+### User Account Management
 
-## Features
-
-- User registration and authentication
-- OAuth2 linking with Elite Dangerous CAPI
-- Commander profile data display
+- Secure account registration
+- Email and password authentication
 - Session management
-- Cloudflare KV storage for user accounts
+- Profile customization
 
-## Deployment
+## Planned Features
 
-This project is configured for deployment on **Cloudflare Pages** with **Cloudflare Workers** integration.
+### Enhanced Commander Data
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
+- **Power Play Information**
+  - Current power allegiance
+  - Power rank and standing
+  - Power-specific statistics
 
-### Quick Start
+- **Fleet Management**
+  - Complete ship inventory
+  - Ship specifications and loadouts
+  - Fleet total value
+  - Ship location tracking
 
-1. Create a Cloudflare KV namespace named `USERS`
-2. Update `wrangler.toml` with your KV namespace ID
-3. Connect your GitHub repository to Cloudflare Pages
-4. Configure environment variables in Cloudflare dashboard
-5. Bind KV namespace in Pages Functions settings
+- **Asset Tracking**
+  - Module inventory
+  - Material storage
+  - Engineering progress
+  - Technology broker unlocks
 
-For complete setup instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+### Activity & Analytics
 
+- **Commander Logs**
+  - View detailed activity history
+  - Filter by event type
+  - Search through journal entries
+  - Export log data
+
+- **Statistics Dashboard**
+  - Time played tracking
+  - Distance traveled
+  - Systems visited count
+  - Credits earned/lost over time
+  - Combat statistics
+  - Trading statistics
+  - Exploration statistics
+
+- **Progress Tracking**
+  - Rank progression charts
+  - Milestone achievements
+  - Goal setting and tracking
+  - Historical data comparison
+
+### System Intelligence
+
+- **System Activity**
+  - Track commander activity by system
+  - View popular systems
+  - System discovery timeline
+  - Traffic patterns
+
+- **System Details**
+  - Full system information
+  - Station listings
+  - Planetary data
+  - Economic information
+  - Security status
+
+### Social Features
+
+- **Commander Directory**
+  - Browse registered commanders
+  - View public profiles
+  - Compare statistics
+  - Find commanders by location
+
+- **Fleet Operations**
+  - Multi-commander coordination
+  - Shared system tracking
+  - Group statistics
+  - Fleet management tools
+
+### Data Management
+
+- **Journal File Management**
+  - Automatic journal parsing
+  - File history tracking
+  - Duplicate detection
+  - Bulk upload support
+
+- **Data Export**
+  - Export commander data
+  - Generate reports
+  - CSV/JSON export options
+  - Custom date range exports
+
+- **Backup & Sync**
+  - Cloud data backup
+  - Multi-device sync
+  - Data recovery options
+
+## Getting Started
+
+1. **Create an Account**
+   - Register with your email and choose a username
+   - Set up a secure password
+
+2. **Add Your Commander Data**
+   - Link your Elite Dangerous account via CAPI for automatic updates
+   - Or upload your journal files to import historical data
+   - Or do both for the most complete picture
+
+3. **Explore Your Dashboard**
+   - View your financial status
+   - Check your current location
+   - Review your ranks and progress
+   - Explore discovered systems
+
+## Data Privacy
+
+Your commander data is stored securely and is only accessible to you. We never share your information with third parties. When you link your Elite Dangerous account, we only access the data you explicitly authorize.
+
+## Support
+
+For deployment and setup instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+---
+
+*GalNetOps — Navigate the galaxy with precision.*

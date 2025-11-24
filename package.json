@@ -7,7 +7,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "db:migrate": "wrangler d1 execute galnetops-db --file=./migrations/0001_initial_schema.sql",
+    "db:migrate:local": "wrangler d1 execute galnetops-db --local --file=./migrations/0001_initial_schema.sql"
   },
   "dependencies": {
     "astro": "^4.15.0",
@@ -20,6 +22,6 @@
     "crypto-browserify": "^3.12.1",
     "stream-browserify": "^3.0.0",
     "tailwindcss": "^3.4.0",
-    "wrangler": "^3.0.0"
+    "wrangler": "^4.50.0"
   }
 }
