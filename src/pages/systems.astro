@@ -1,0 +1,502 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Button from '../components/Button.astro';
+import { checkAuth } from '../lib/auth';
+import { getAllSystemNames } from '../lib/systems-kv';
+
+const auth = await checkAuth(Astro);
+let systemNames: string[] = [];
+
+// Get system names for autocomplete (only if authenticated)
+try {
+  if (auth.isAuthenticated) {
+    systemNames = await getAllSystemNames(Astro);
+  }
+} catch (error) {
+  // KV might not be available in dev, that's okay
+  console.warn('Could not load system names:', error);
+}
+---
+
+<DashboardLayout title="GalNetOps - Systems">
+  <div class="p-6 space-y-6">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1>Star Systems</h1>
+        <p class="text-text-secondary mt-2">Search and explore discovered star systems</p>
+      </div>
+      {auth.isAuthenticated && (
+        <Button variant="primary" id="upload-files-btn">Upload Files</Button>
+      )}
+    </div>
+
+    <!-- Search Bar -->
+    <div class="card">
+      <h3 class="mb-4">Search System</h3>
+      <div class="relative">
+        <input
+          type="text"
+          id="system-search"
+          placeholder="Enter system name..."
+          class="w-full px-4 py-3 bg-bg-primary border border-border rounded-button text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent transition-colors"
+          autocomplete="off"
+        />
+        <div
+          id="autocomplete-results"
+          class="absolute z-10 w-full mt-2 bg-bg-secondary border border-border rounded-button shadow-lg max-h-64 overflow-y-auto hidden"
+        ></div>
+      </div>
+      <p class="text-text-secondary text-xs mt-2">
+        Systems are populated from uploaded journal files. Use the "Upload Files" button above to add systems.
+      </p>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-bg-secondary border border-border rounded-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold text-text-primary">Upload Journal Files</h3>
+          <button
+            id="close-upload-modal"
+            class="text-text-secondary hover:text-text-primary transition-colors"
+            aria-label="Close"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <p class="text-text-secondary text-sm mb-4">
+          Upload your Elite Dangerous journal files to extract system data, commander information, and more.
+          You can select multiple files at once for bulk upload.
+        </p>
+        <p class="text-text-secondary text-xs mb-4">
+          Journal files are typically located in: <code class="text-accent">%USERPROFILE%\Saved Games\Frontier Developments\Elite Dangerous\</code>
+        </p>
+
+        <form id="systems-upload-form" enctype="multipart/form-data" class="space-y-4">
+          <div>
+            <label for="systems-journal-files" class="block mb-2 text-text-secondary text-sm">
+              Select Journal Files (.log)
+            </label>
+            <input
+              type="file"
+              id="systems-journal-files"
+              name="journal-files"
+              accept=".log,.txt"
+              multiple
+              class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-button file:border-0 file:text-sm file:font-medium file:bg-accent file:text-bg-primary hover:file:bg-accent-soft file:cursor-pointer cursor-pointer"
+              required
+            />
+            <p id="systems-file-count" class="text-accent text-xs mt-1 hidden"></p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              type="submit"
+              id="systems-upload-btn"
+              class="px-4 py-2 bg-accent text-bg-primary rounded-button hover:bg-accent-soft transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Upload & Process
+            </button>
+            <div id="systems-upload-status" class="text-sm"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- System Details (shown when system is selected) -->
+    <div id="system-details" class="hidden space-y-6">
+      <!-- System Header -->
+      <div class="card card-highlight">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h2 id="system-name" class="text-2xl font-semibold text-text-primary mb-2"></h2>
+            <p id="system-address" class="text-text-secondary text-sm"></p>
+          </div>
+          <Button variant="secondary" id="clear-selection">Clear Selection</Button>
+        </div>
+        <div id="system-metadata" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-border">
+          <!-- Metadata will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Stars Section -->
+      <div id="stars-section" class="card">
+        <h3 class="mb-4">Stars</h3>
+        <div id="stars-list" class="space-y-4">
+          <!-- Stars will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Planets Section -->
+      <div id="planets-section" class="card">
+        <h3 class="mb-4">Planets & Moons</h3>
+        <div id="planets-list" class="space-y-6">
+          <!-- Planets will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Biologicals Section -->
+      <div id="biologicals-section" class="card hidden">
+        <h3 class="mb-4">Biological Signals</h3>
+        <div id="biologicals-list" class="space-y-3">
+          <!-- Biologicals will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="card text-center py-12">
+      <p class="text-text-secondary mb-4">No system selected</p>
+      <p class="text-text-secondary text-sm">
+        Search for a system above or upload journal files in Settings to discover new systems.
+      </p>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script define:vars={{ systemNames }}>
+  const searchInput = document.getElementById('system-search') as HTMLInputElement;
+  const autocompleteResults = document.getElementById('autocomplete-results') as HTMLDivElement;
+  const systemDetails = document.getElementById('system-details') as HTMLDivElement;
+  const emptyState = document.getElementById('empty-state') as HTMLDivElement;
+  const clearButton = document.getElementById('clear-selection') as HTMLButtonElement;
+
+  let selectedSystem: string | null = null;
+  let searchTimeout: NodeJS.Timeout;
+
+  // Autocomplete functionality
+  searchInput.addEventListener('input', (e) => {
+    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 2) {
+      autocompleteResults.classList.add('hidden');
+      return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+      const matches = systemNames.filter(name => 
+        name.toLowerCase().includes(query)
+      ).slice(0, 10);
+
+      if (matches.length === 0) {
+        autocompleteResults.classList.add('hidden');
+        return;
+      }
+
+      autocompleteResults.innerHTML = matches.map(name => `
+        <button
+          class="w-full text-left px-4 py-2 hover:bg-bg-primary text-text-primary transition-colors"
+          data-system="${name}"
+        >
+          ${name}
+        </button>
+      `).join('');
+
+      autocompleteResults.classList.remove('hidden');
+
+      // Add click handlers
+      autocompleteResults.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const systemName = btn.dataset.system;
+          if (systemName) {
+            loadSystem(systemName);
+            searchInput.value = systemName;
+            autocompleteResults.classList.add('hidden');
+          }
+        });
+      });
+    }, 200);
+  });
+
+  // Close autocomplete when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target as Node) && !autocompleteResults.contains(e.target as Node)) {
+      autocompleteResults.classList.add('hidden');
+    }
+  });
+
+  // Load system data
+  async function loadSystem(systemName: string) {
+    selectedSystem = systemName;
+    emptyState.classList.add('hidden');
+    systemDetails.classList.remove('hidden');
+
+    try {
+      const response = await fetch(`/api/systems/${encodeURIComponent(systemName)}`);
+      if (!response.ok) {
+        throw new Error('System not found');
+      }
+
+      const system = await response.json();
+      displaySystem(system);
+    } catch (error) {
+      console.error('Error loading system:', error);
+      alert('Failed to load system data');
+    }
+  }
+
+  // Display system data
+  function displaySystem(system: any) {
+    // System header
+    document.getElementById('system-name')!.textContent = system.name;
+    document.getElementById('system-address')!.textContent = `Address: ${system.systemAddress}`;
+
+    // Metadata
+    const metadata = document.getElementById('system-metadata')!;
+    metadata.innerHTML = `
+      <div>
+        <label class="text-xs text-text-secondary">Stars</label>
+        <p class="text-text-primary font-medium">${system.stars?.length || 0}</p>
+      </div>
+      <div>
+        <label class="text-xs text-text-secondary">Planets</label>
+        <p class="text-text-primary font-medium">${system.planets?.length || 0}</p>
+      </div>
+      <div>
+        <label class="text-xs text-text-secondary">Discovered</label>
+        <p class="text-text-primary font-medium text-sm">${system.discoveredBy || 'Unknown'}</p>
+      </div>
+      <div>
+        <label class="text-xs text-text-secondary">Last Updated</label>
+        <p class="text-text-primary font-medium text-sm">${system.lastUpdated ? new Date(system.lastUpdated).toLocaleDateString() : 'Unknown'}</p>
+      </div>
+    `;
+
+    // Stars
+    const starsList = document.getElementById('stars-list')!;
+    if (system.stars && system.stars.length > 0) {
+      starsList.innerHTML = system.stars.map((star: any) => `
+        <div class="p-4 bg-bg-primary rounded border border-border">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="text-text-primary font-medium">${star.name}</h4>
+            ${star.isMainStar ? '<span class="text-xs text-accent">Main Star</span>' : ''}
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div>
+              <label class="text-xs text-text-secondary">Type</label>
+              <p class="text-text-primary">${star.type || 'Unknown'}</p>
+            </div>
+            ${star.luminosity ? `
+              <div>
+                <label class="text-xs text-text-secondary">Luminosity</label>
+                <p class="text-text-primary">${star.luminosity}</p>
+              </div>
+            ` : ''}
+            ${star.surfaceTemperature ? `
+              <div>
+                <label class="text-xs text-text-secondary">Temperature</label>
+                <p class="text-text-primary">${star.surfaceTemperature.toLocaleString()} K</p>
+              </div>
+            ` : ''}
+            ${star.stellarMass ? `
+              <div>
+                <label class="text-xs text-text-secondary">Mass</label>
+                <p class="text-text-primary">${star.stellarMass.toFixed(2)} SM</p>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    } else {
+      starsList.innerHTML = '<p class="text-text-secondary text-sm">No star data available</p>';
+    }
+
+    // Planets
+    const planetsList = document.getElementById('planets-list')!;
+    if (system.planets && system.planets.length > 0) {
+      planetsList.innerHTML = system.planets.map((planet: any) => `
+        <div class="p-4 bg-bg-primary rounded border border-border">
+          <h4 class="text-text-primary font-medium mb-3">${planet.name}</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-3">
+            <div>
+              <label class="text-xs text-text-secondary">Class</label>
+              <p class="text-text-primary">${planet.planetClass || 'Unknown'}</p>
+            </div>
+            ${planet.atmosphere ? `
+              <div>
+                <label class="text-xs text-text-secondary">Atmosphere</label>
+                <p class="text-text-primary">${planet.atmosphere}</p>
+              </div>
+            ` : ''}
+            ${planet.landable ? `
+              <div>
+                <label class="text-xs text-text-secondary">Landable</label>
+                <p class="text-accent">Yes</p>
+              </div>
+            ` : ''}
+            ${planet.terraformState ? `
+              <div>
+                <label class="text-xs text-text-secondary">Terraformable</label>
+                <p class="text-text-primary">${planet.terraformState}</p>
+              </div>
+            ` : ''}
+            ${planet.surfaceTemperature ? `
+              <div>
+                <label class="text-xs text-text-secondary">Temperature</label>
+                <p class="text-text-primary">${planet.surfaceTemperature.toFixed(1)} K</p>
+              </div>
+            ` : ''}
+            ${planet.volcanism ? `
+              <div>
+                <label class="text-xs text-text-secondary">Volcanism</label>
+                <p class="text-text-primary">${planet.volcanism}</p>
+              </div>
+            ` : ''}
+          </div>
+          ${planet.moons && planet.moons.length > 0 ? `
+            <div class="mt-3 pt-3 border-t border-border">
+              <label class="text-xs text-text-secondary mb-2 block">Moons (${planet.moons.length})</label>
+              <div class="space-y-2">
+                ${planet.moons.map((moon: any) => `
+                  <div class="pl-4 border-l-2 border-accent/30">
+                    <p class="text-text-primary text-sm font-medium">${moon.name}</p>
+                    <p class="text-text-secondary text-xs">${moon.planetClass || 'Unknown'}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    } else {
+      planetsList.innerHTML = '<p class="text-text-secondary text-sm">No planet data available</p>';
+    }
+
+    // Biologicals
+    if (system.biologicals && system.biologicals.length > 0) {
+      const biologicalsSection = document.getElementById('biologicals-section')!;
+      const biologicalsList = document.getElementById('biologicals-list')!;
+      biologicalsSection.classList.remove('hidden');
+      biologicalsList.innerHTML = system.biologicals.map((bio: any) => `
+        <div class="p-3 bg-bg-primary rounded border border-border">
+          <p class="text-text-primary font-medium">${bio.name}</p>
+          <p class="text-text-secondary text-sm">${bio.bodyName}</p>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('biologicals-section')!.classList.add('hidden');
+    }
+  }
+
+  // Clear selection
+  clearButton.addEventListener('click', () => {
+    selectedSystem = null;
+    searchInput.value = '';
+    systemDetails.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+  });
+
+  // Upload modal functionality
+  const uploadModal = document.getElementById('upload-modal') as HTMLDivElement;
+  const uploadBtn = document.getElementById('upload-files-btn') as HTMLButtonElement;
+  const closeModalBtn = document.getElementById('close-upload-modal') as HTMLButtonElement;
+  const uploadForm = document.getElementById('systems-upload-form') as HTMLFormElement;
+  const systemsFileInput = document.getElementById('systems-journal-files') as HTMLInputElement;
+  const systemsUploadBtn = document.getElementById('systems-upload-btn') as HTMLButtonElement;
+  const systemsUploadStatus = document.getElementById('systems-upload-status') as HTMLDivElement;
+  const systemsFileCount = document.getElementById('systems-file-count') as HTMLParagraphElement;
+
+  // Open modal
+  if (uploadBtn && uploadModal) {
+    uploadBtn.addEventListener('click', () => {
+      uploadModal.classList.remove('hidden');
+    });
+  }
+
+  // Close modal
+  if (closeModalBtn && uploadModal) {
+    closeModalBtn.addEventListener('click', () => {
+      uploadModal.classList.add('hidden');
+      uploadForm.reset();
+      systemsUploadStatus.textContent = '';
+      systemsFileCount.classList.add('hidden');
+    });
+  }
+
+  // Close modal on outside click
+  if (uploadModal) {
+    uploadModal.addEventListener('click', (e) => {
+      if (e.target === uploadModal) {
+        uploadModal.classList.add('hidden');
+        uploadForm.reset();
+        systemsUploadStatus.textContent = '';
+        systemsFileCount.classList.add('hidden');
+      }
+    });
+  }
+
+  // Show file count
+  if (systemsFileInput && systemsFileCount) {
+    systemsFileInput.addEventListener('change', (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files.length > 0) {
+        systemsFileCount.textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
+        systemsFileCount.classList.remove('hidden');
+      } else {
+        systemsFileCount.classList.add('hidden');
+      }
+    });
+  }
+
+  // Handle upload
+  if (uploadForm && systemsUploadBtn && systemsUploadStatus) {
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!systemsFileInput?.files || systemsFileInput.files.length === 0) {
+        systemsUploadStatus.textContent = 'Please select at least one file';
+        systemsUploadStatus.className = 'text-sm text-red-400';
+        return;
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < systemsFileInput.files.length; i++) {
+        formData.append('journal-files', systemsFileInput.files[i]);
+      }
+
+      systemsUploadBtn.disabled = true;
+      const originalText = systemsUploadBtn.textContent;
+      systemsUploadBtn.textContent = 'Uploading...';
+      systemsUploadStatus.textContent = '';
+      systemsUploadStatus.className = 'text-sm';
+
+      try {
+        const response = await fetch('/api/journal/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          systemsUploadStatus.textContent = `Success! Processed ${data.data?.systemsStored || 0} system(s). Refreshing...`;
+          systemsUploadStatus.className = 'text-sm text-accent';
+          
+          // Close modal and reload page after a delay
+          setTimeout(() => {
+            uploadModal.classList.add('hidden');
+            uploadForm.reset();
+            window.location.reload();
+          }, 1500);
+        } else {
+          systemsUploadStatus.textContent = 'Error: ' + (data.error || 'Upload failed');
+          systemsUploadStatus.className = 'text-sm text-red-400';
+          systemsUploadBtn.disabled = false;
+          systemsUploadBtn.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        systemsUploadStatus.textContent = 'Network error. Please try again.';
+        systemsUploadStatus.className = 'text-sm text-red-400';
+        systemsUploadBtn.disabled = false;
+        systemsUploadBtn.textContent = originalText;
+      }
+    });
+  }
+</script>
+

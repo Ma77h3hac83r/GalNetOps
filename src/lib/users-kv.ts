@@ -19,6 +19,27 @@ export interface UserAccount {
     debt?: number;
     lastSystem?: string;
     lastStarport?: string;
+    currentBody?: string;
+    shipName?: string;
+    shipType?: string;
+    shipIdent?: string;
+    ranks?: {
+      combat?: number;
+      trade?: number;
+      explorer?: number;
+      cqc?: number;
+      empire?: number;
+      federation?: number;
+    };
+    rankProgress?: {
+      combat?: number;
+      trade?: number;
+      explorer?: number;
+      cqc?: number;
+      empire?: number;
+      federation?: number;
+    };
+    journalLastUpdated?: string;
   };
   createdAt: string;
   lastUpdated: string;

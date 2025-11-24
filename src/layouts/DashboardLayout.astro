@@ -76,7 +76,7 @@ const auth = await checkAuth(Astro);
                 </a>
               </li>
               <li>
-                <a href="#" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
+                <a href="/systems" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
                   Systems
                 </a>
               </li>
@@ -85,6 +85,13 @@ const auth = await checkAuth(Astro);
                   Analytics
                 </a>
               </li>
+              {auth.isAuthenticated && (
+                <li>
+                  <a href="/settings" class="block px-4 py-2 text-text-secondary hover:text-accent-soft transition-colors">
+                    Settings
+                  </a>
+                </li>
+              )}
             </ul>
           </nav>
         </aside>

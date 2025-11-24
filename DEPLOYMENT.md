@@ -48,7 +48,7 @@ id = "your-actual-kv-namespace-id"
 ```bash
 npm install -g wrangler
 wrangler login
-wrangler pages project create galnetops-dashboard
+wrangler pages project create galnetops
 ```
 
 ## Step 4: Configure Environment Variables
@@ -89,13 +89,29 @@ BASE_URL=https://yourdomain.com
 
 If you want automated deployments via GitHub Actions:
 
-1. In your GitHub repository, go to **Settings** > **Secrets and variables** > **Actions**
-2. Add the following secrets:
-   - `CLOUDFLARE_API_TOKEN`: Get from [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
-     - Create token with **Account** > **Cloudflare Pages** > **Edit** permissions
-   - `CLOUDFLARE_ACCOUNT_ID`: Found in Cloudflare Dashboard URL or Workers overview
+1. **Get your Cloudflare API Token:**
+   - Go to [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+   - Click **Create Token**
+   - Use the **Edit Cloudflare Workers** template, or create a custom token with:
+     - **Account** > **Cloudflare Pages** > **Edit** permissions
+     - **Account** > **Account Settings** > **Read** (to get Account ID)
+   - Click **Continue to summary** then **Create Token**
+   - **Copy the token immediately** (you won't be able to see it again)
+
+2. **Get your Cloudflare Account ID:**
+   - Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Click on any domain or go to **Workers & Pages** > **Overview**
+   - Your Account ID is shown in the right sidebar, or in the URL: `https://dash.cloudflare.com/[ACCOUNT_ID]/...`
+
+3. **Add GitHub Secrets:**
+   - In your GitHub repository, go to **Settings** > **Secrets and variables** > **Actions**
+   - Click **New repository secret**
+   - Add `CLOUDFLARE_API_TOKEN` with the token you copied
+   - Add another secret `CLOUDFLARE_ACCOUNT_ID` with your Account ID
 
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) will automatically deploy on pushes to `main`.
+
+**Note:** If you prefer not to use GitHub Actions, you can use Cloudflare Pages' built-in Git integration (see Step 3, Option A) which doesn't require API tokens.
 
 ## Step 8: Update ED CAPI Redirect URI
 
@@ -145,6 +161,16 @@ For local development, you can also use the file-based storage by keeping the or
 - Check Node.js version (should be 20+)
 - Ensure all dependencies are in `package.json`
 - Review build logs in Cloudflare Pages dashboard
+
+### GitHub Actions "apiToken" Error
+
+If you see `Error: Input required and not supplied: apiToken`:
+
+- Ensure `CLOUDFLARE_API_TOKEN` secret is set in GitHub repository settings
+- Ensure `CLOUDFLARE_ACCOUNT_ID` secret is set in GitHub repository settings
+- Go to **Settings** > **Secrets and variables** > **Actions** in your GitHub repository
+- Verify both secrets are named exactly as shown (case-sensitive)
+- Re-run the failed workflow after adding the secrets
 
 ## Production Checklist
 

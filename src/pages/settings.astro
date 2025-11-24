@@ -1,0 +1,252 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Button from '../components/Button.astro';
+import { checkAuth } from '../lib/auth';
+import { getUserById } from '../lib/users';
+
+const auth = await checkAuth(Astro);
+let userProfile = null;
+
+if (auth.isAuthenticated && auth.user) {
+  const user = await getUserById(auth.user.id, Astro);
+  userProfile = user;
+}
+
+if (!auth.isAuthenticated || !userProfile) {
+  return Astro.redirect('/login');
+}
+---
+
+<DashboardLayout title="GalNetOps - Settings">
+  <div class="p-6 space-y-6">
+    <div class="mb-8">
+      <h1>Account Settings</h1>
+      <p class="text-text-secondary mt-2">Manage your account and commander data</p>
+    </div>
+
+    <!-- Account Information -->
+    <div class="card">
+      <h3 class="mb-4">Account Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block">Username</label>
+          <p class="text-text-primary font-medium">{userProfile.username}</p>
+        </div>
+        <div>
+          <label class="mb-1 block">Email</label>
+          <p class="text-text-primary font-medium">{userProfile.email}</p>
+        </div>
+        {userProfile.commanderName && (
+          <div>
+            <label class="mb-1 block">Commander Name</label>
+            <p class="text-text-primary font-medium">{userProfile.commanderName}</p>
+          </div>
+        )}
+        <div>
+          <label class="mb-1 block">Account Created</label>
+          <p class="text-text-primary font-medium">
+            {new Date(userProfile.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elite Dangerous Data Sources -->
+    <div class="card">
+      <h3 class="mb-4">Elite Dangerous Data</h3>
+      
+      {userProfile.frontierId ? (
+        <div class="mb-6 p-4 bg-bg-primary rounded border border-accent">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h4 class="text-text-primary font-medium">CAPI Account Linked</h4>
+              <p class="text-text-secondary text-sm">Your Elite Dangerous account is linked via CAPI</p>
+            </div>
+            <span class="inline-flex items-center gap-1 text-accent text-sm">
+              <span class="w-2 h-2 rounded-full bg-accent"></span>
+              Active
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div class="mb-6 p-4 bg-bg-primary rounded border border-border">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h4 class="text-text-primary font-medium">CAPI Account Not Linked</h4>
+              <p class="text-text-secondary text-sm">Link your account for automatic data updates</p>
+            </div>
+            <Button variant="primary" href="/auth/link">Link Account</Button>
+          </div>
+        </div>
+      )}
+
+      <!-- Journal File Upload -->
+      <div class="border-t border-border pt-6">
+        <h4 class="text-text-primary font-medium mb-2">Journal File Upload</h4>
+        <p class="text-text-secondary text-sm mb-4">
+          Upload your Elite Dangerous journal files to extract commander data, ranks, location, and ship information.
+          Journal files are typically located in: <code class="text-accent">%USERPROFILE%\Saved Games\Frontier Developments\Elite Dangerous\</code>
+        </p>
+        
+        <form id="journal-upload-form" enctype="multipart/form-data">
+          <div class="space-y-4">
+            <div>
+              <label for="journal-file" class="block mb-2 text-text-secondary text-sm">
+                Select Journal Files (.log)
+              </label>
+              <input
+                type="file"
+                id="journal-file"
+                name="journal-files"
+                accept=".log,.txt"
+                multiple
+                class="block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-button file:border-0 file:text-sm file:font-medium file:bg-accent file:text-bg-primary hover:file:bg-accent-soft file:cursor-pointer cursor-pointer"
+                required
+              />
+              <p class="text-text-secondary text-xs mt-2">
+                Select one or more journal files for bulk upload. All files will be processed and system data will be extracted.
+              </p>
+              <p id="file-count" class="text-accent text-xs mt-1 hidden"></p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <button
+                type="submit"
+                id="upload-btn"
+                class="px-4 py-2 bg-accent text-bg-primary rounded-button hover:bg-accent-soft transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Upload & Process
+              </button>
+              <div id="upload-status" class="text-sm"></div>
+            </div>
+          </div>
+        </form>
+
+        {userProfile.profile?.journalLastUpdated && (
+          <div class="mt-4 p-3 bg-bg-primary rounded border border-border">
+            <p class="text-text-secondary text-sm">
+              <span class="font-medium text-text-primary">Last updated from journal:</span>{' '}
+              {new Date(userProfile.profile.journalLastUpdated).toLocaleString()}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- Data Preview -->
+    {userProfile.profile && (userProfile.profile.credits !== undefined || userProfile.profile.ranks) && (
+      <div class="card">
+        <h3 class="mb-4">Current Data</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {userProfile.profile.credits !== undefined && (
+            <div>
+              <label class="mb-1 block">Credits</label>
+              <p class="text-text-primary font-medium">
+                {userProfile.profile.credits.toLocaleString()} CR
+              </p>
+            </div>
+          )}
+          {userProfile.profile.debt !== undefined && userProfile.profile.debt > 0 && (
+            <div>
+              <label class="mb-1 block">Debt</label>
+              <p class="text-text-primary font-medium text-red-400">
+                {userProfile.profile.debt.toLocaleString()} CR
+              </p>
+            </div>
+          )}
+          {userProfile.profile.lastSystem && (
+            <div>
+              <label class="mb-1 block">Last System</label>
+              <p class="text-text-primary font-medium">{userProfile.profile.lastSystem}</p>
+            </div>
+          )}
+          {userProfile.profile.shipName && (
+            <div>
+              <label class="mb-1 block">Ship</label>
+              <p class="text-text-primary font-medium">
+                {userProfile.profile.shipName}
+                {userProfile.profile.shipType && ` (${userProfile.profile.shipType})`}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
+
+<script>
+  const form = document.getElementById('journal-upload-form') as HTMLFormElement;
+  const uploadBtn = document.getElementById('upload-btn') as HTMLButtonElement;
+  const statusDiv = document.getElementById('upload-status') as HTMLDivElement;
+  const fileInput = document.getElementById('journal-file') as HTMLInputElement;
+  const fileCount = document.getElementById('file-count') as HTMLParagraphElement;
+
+  // Show file count when files are selected
+  if (fileInput && fileCount) {
+    fileInput.addEventListener('change', (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files.length > 0) {
+        fileCount.textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
+        fileCount.classList.remove('hidden');
+      } else {
+        fileCount.classList.add('hidden');
+      }
+    });
+  }
+
+  if (form && uploadBtn && statusDiv) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!fileInput?.files || fileInput.files.length === 0) {
+        statusDiv.textContent = 'Please select a file';
+        statusDiv.className = 'text-sm text-red-400';
+        return;
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('journal-files', fileInput.files[i]);
+      }
+
+      uploadBtn.disabled = true;
+      const originalText = uploadBtn.textContent;
+      uploadBtn.textContent = 'Uploading...';
+      statusDiv.textContent = '';
+      statusDiv.className = 'text-sm';
+
+      try {
+        const response = await fetch('/api/journal/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const systemsCount = data.data?.systemsStored || 0;
+          statusDiv.textContent = `Upload successful! Processed ${systemsCount} system(s). Refreshing...`;
+          statusDiv.className = 'text-sm text-accent';
+          
+          // Reload page after a short delay to show updated data
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          statusDiv.textContent = 'Error: ' + (data.error || 'Upload failed');
+          statusDiv.className = 'text-sm text-red-400';
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        statusDiv.textContent = 'Network error. Please try again.';
+        statusDiv.className = 'text-sm text-red-400';
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = originalText;
+      }
+    });
+  }
+</script>
+

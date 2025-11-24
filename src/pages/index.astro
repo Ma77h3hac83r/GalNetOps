@@ -3,6 +3,7 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
 import Button from '../components/Button.astro';
 import { checkAuth } from '../lib/auth';
 import { getUserById } from '../lib/users';
+import { getRankName } from '../lib/journal-parser';
 
 const auth = await checkAuth(Astro);
 const url = Astro.url;
@@ -13,15 +14,36 @@ if (auth.isAuthenticated && auth.user) {
   const user = await getUserById(auth.user.id, Astro);
   userProfile = user;
 }
+
+// Check if user has any commander data (from CAPI or journal files)
+const hasCommanderData = userProfile ? Boolean(
+  userProfile.frontierId || 
+  userProfile.commanderName || 
+  userProfile.profile?.credits !== undefined ||
+  userProfile.profile?.ranks ||
+  userProfile.profile?.lastSystem
+) : false;
+
+// Calculate net worth (credits - debt)
+const netWorth = userProfile?.profile?.credits 
+  ? userProfile.profile.credits - (userProfile.profile.debt || 0)
+  : null;
+
+// Get commander initial for avatar
+const commanderInitial = userProfile 
+  ? (userProfile.commanderName || userProfile.username || 'C').charAt(0).toUpperCase()
+  : 'C';
 ---
 
 <DashboardLayout title="GalNetOps - Home">
   <div class="p-6 space-y-6">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <h1>Commander Dashboard</h1>
-      <p class="text-text-secondary mt-2">Overview of Elite Dangerous commander data and operations</p>
-    </div>
+    <!-- Page Header - Only show when not viewing commander dashboard -->
+    {!auth.isAuthenticated || !hasCommanderData ? (
+      <div class="mb-8">
+        <h1>Commander Dashboard</h1>
+        <p class="text-text-secondary mt-2">Overview of Elite Dangerous commander data and operations</p>
+      </div>
+    ) : null}
 
     {linkedParam === 'true' && (
       <div class="card border-accent mb-6">
@@ -30,111 +52,350 @@ if (auth.isAuthenticated && auth.user) {
       </div>
     )}
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Stat Card 1 -->
-      <div class="card">
-        <label class="mb-1">Total Commanders</label>
-        <h2 class="mt-2">0</h2>
-        <p class="text-text-secondary text-sm mt-1">Registered pilots</p>
-      </div>
+    {!auth.isAuthenticated || !hasCommanderData ? (
+      <!-- Stats Grid - Shown when not logged in or no commander data -->
+      <>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Stat Card 1 -->
+          <div class="card">
+            <label class="mb-1">Total Commanders</label>
+            <h2 class="mt-2">0</h2>
+            <p class="text-text-secondary text-sm mt-1">Registered pilots</p>
+          </div>
 
-      <!-- Stat Card 2 -->
-      <div class="card">
-        <label class="mb-1">Active Systems</label>
-        <h2 class="mt-2">0</h2>
-        <p class="text-text-secondary text-sm mt-1">Monitored locations</p>
-      </div>
+          <!-- Stat Card 2 -->
+          <div class="card">
+            <label class="mb-1">Active Systems</label>
+            <h2 class="mt-2">0</h2>
+            <p class="text-text-secondary text-sm mt-1">Monitored locations</p>
+          </div>
 
-      <!-- Stat Card 3 -->
-      <div class="card">
-        <label class="mb-1">Recent Activity</label>
-        <h2 class="mt-2">0</h2>
-        <p class="text-text-secondary text-sm mt-1">Last 24 hours</p>
-      </div>
+          <!-- Stat Card 3 -->
+          <div class="card">
+            <label class="mb-1">Recent Activity</label>
+            <h2 class="mt-2">0</h2>
+            <p class="text-text-secondary text-sm mt-1">Last 24 hours</p>
+          </div>
 
-      <!-- Stat Card 4 -->
-      <div class="card card-highlight">
-        <label class="mb-1">Network Status</label>
-        <h2 class="mt-2 text-accent">Online</h2>
-        <p class="text-text-secondary text-sm mt-1">All systems operational</p>
-      </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Recent Commanders Card -->
-      <div class="card">
-        <h3 class="mb-4">Recent Commanders</h3>
-        <div class="space-y-3">
-          <div class="text-text-secondary text-sm">
-            No commander data available yet.
+          <!-- Stat Card 4 -->
+          <div class="card card-highlight">
+            <label class="mb-1">Network Status</label>
+            <h2 class="mt-2 text-accent">Online</h2>
+            <p class="text-text-secondary text-sm mt-1">All systems operational</p>
           </div>
         </div>
-        <div class="mt-4">
-          <Button variant="secondary" href="#">View All Commanders</Button>
-        </div>
-      </div>
 
-      <!-- System Activity Card -->
-      <div class="card">
-        <h3 class="mb-4">System Activity</h3>
-        <div class="space-y-3">
-          <div class="text-text-secondary text-sm">
-            No system activity data available yet.
-          </div>
-        </div>
-        <div class="mt-4">
-          <Button variant="secondary" href="#">View All Systems</Button>
-        </div>
-      </div>
-    </div>
-
-    {auth.isAuthenticated && userProfile ? (
-      userProfile.frontierId ? (
-        <!-- User Profile Card - ED Account Linked -->
-        <div class="card card-highlight">
-          <h3 class="mb-4">Your Commander Profile</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="mb-1">Commander Name</label>
-              <p class="text-text-primary font-medium">{userProfile.commanderName}</p>
+        <!-- Main Content Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Recent Commanders Card -->
+          <div class="card">
+            <h3 class="mb-4">Recent Commanders</h3>
+            <div class="space-y-3">
+              <div class="text-text-secondary text-sm">
+                No commander data available yet.
+              </div>
             </div>
-            {userProfile.profile?.credits !== undefined && (
+            <div class="mt-4">
+              <Button variant="secondary" href="#">View All Commanders</Button>
+            </div>
+          </div>
+
+          <!-- System Activity Card -->
+          <div class="card">
+            <h3 class="mb-4">System Activity</h3>
+            <div class="space-y-3">
+              <div class="text-text-secondary text-sm">
+                No system activity data available yet.
+              </div>
+            </div>
+            <div class="mt-4">
+              <Button variant="secondary" href="#">View All Systems</Button>
+            </div>
+          </div>
+        </div>
+      </>
+    ) : null}
+
+    {auth.isAuthenticated && userProfile && hasCommanderData ? (
+      <!-- Commander Dashboard -->
+        <div class="space-y-6">
+          <!-- Commander Header Section -->
+          <div class="card card-highlight">
+            <div class="flex items-start justify-between mb-6">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center border-2 border-accent">
+                  <span class="text-2xl font-semibold text-accent">
+                    {commanderInitial}
+                  </span>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-semibold text-text-primary mb-1">
+                    CMDR {userProfile.commanderName || userProfile.username}
+                  </h2>
+                  <p class="text-text-secondary text-sm">Elite Dangerous Commander</p>
+                </div>
+              </div>
+              {userProfile && userProfile.frontierId ? (
+                <form method="POST" action="/api/commander/refresh" class="inline" id="refresh-form">
+                  <button
+                    type="submit"
+                    id="refresh-btn"
+                    class="px-4 py-2 bg-bg-primary border border-accent text-accent rounded-button hover:bg-accent/10 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Refresh Data
+                  </button>
+                </form>
+              ) : (
+                <Button variant="secondary" href="/settings">Update Data</Button>
+              )}
+            </div>
+
+            <!-- Financial Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-border">
               <div>
-                <label class="mb-1">Credits</label>
-                <p class="text-text-primary font-medium">
-                  {userProfile.profile.credits.toLocaleString()} CR
+                <label class="mb-2 block">Credit Balance</label>
+                <p class="text-2xl font-semibold text-text-primary">
+                  {userProfile.profile?.credits ? userProfile.profile.credits.toLocaleString() : '0'} CR
                 </p>
               </div>
-            )}
-            {userProfile.profile?.lastSystem && (
-              <div>
-                <label class="mb-1">Last System</label>
-                <p class="text-text-primary font-medium">{userProfile.profile.lastSystem}</p>
+              {userProfile.profile?.debt !== undefined && userProfile.profile.debt > 0 && (
+                <div>
+                  <label class="mb-2 block">Debt</label>
+                  <p class="text-2xl font-semibold text-red-400">
+                    {userProfile.profile.debt.toLocaleString()} CR
+                  </p>
+                </div>
+              )}
+              {netWorth !== null && (
+                <div>
+                  <label class="mb-2 block">Net Worth</label>
+                  <p class="text-2xl font-semibold text-accent">
+                    {netWorth.toLocaleString()} CR
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Location & Info -->
+            <div class="space-y-6">
+              <!-- Location Card -->
+              <div class="card">
+                <h3 class="mb-4">Location</h3>
+                <div class="space-y-4">
+                  {userProfile.profile?.lastSystem ? (
+                    <div>
+                      <label class="mb-1 block">Star System</label>
+                      <p class="text-text-primary font-medium">{userProfile.profile.lastSystem}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <label class="mb-1 block">Star System</label>
+                      <p class="text-text-secondary text-sm">Unknown</p>
+                    </div>
+                  )}
+                  {userProfile.profile?.lastStarport ? (
+                    <div>
+                      <label class="mb-1 block">Station/Port</label>
+                      <p class="text-text-primary font-medium">{userProfile.profile.lastStarport}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <label class="mb-1 block">Station/Port</label>
+                      <p class="text-text-secondary text-sm">Not docked</p>
+                    </div>
+                  )}
+                  {userProfile.profile?.currentBody && (
+                    <div>
+                      <label class="mb-1 block">Body</label>
+                      <p class="text-text-primary font-medium text-sm">{userProfile.profile.currentBody}</p>
+                    </div>
+                  )}
+                  {userProfile.profile?.shipName && (
+                    <div>
+                      <label class="mb-1 block">Current Ship</label>
+                      <p class="text-text-primary font-medium text-sm">
+                        {userProfile.profile.shipName}
+                        {userProfile.profile.shipType && ` (${userProfile.profile.shipType})`}
+                        {userProfile.profile.shipIdent && ` [${userProfile.profile.shipIdent}]`}
+                      </p>
+                    </div>
+                  )}
+                  <div class="pt-2">
+                    <Button variant="secondary" href="/settings" class="w-full">Update Data</Button>
+                  </div>
+                </div>
               </div>
-            )}
-            {userProfile.profile?.lastStarport && (
-              <div>
-                <label class="mb-1">Last Starport</label>
-                <p class="text-text-primary font-medium">{userProfile.profile.lastStarport}</p>
+
+              <!-- Commander Info Card -->
+              <div class="card">
+                <h3 class="mb-4">Commander Info</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="mb-1 block">Game Platform</label>
+                    <p class="text-text-primary text-sm">PC</p>
+                  </div>
+                  <div>
+                    <label class="mb-1 block">In-Game Name</label>
+                    <p class="text-text-primary text-sm">{userProfile.commanderName}</p>
+                  </div>
+                  <div>
+                    <label class="mb-1 block">Account Status</label>
+                    <span class="inline-flex items-center gap-1 text-accent text-sm">
+                      <span class="w-2 h-2 rounded-full bg-accent"></span>
+                      Linked
+                    </span>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
+
+            <!-- Center Column: Ranks & Progress -->
+            <div class="space-y-6">
+              <!-- Ranks Card -->
+              <div class="card">
+                <h3 class="mb-4">Ranks & Reputation</h3>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="p-3 bg-bg-primary rounded border border-border">
+                      <label class="text-xs mb-1 block text-text-secondary">COMBAT</label>
+                      {userProfile.profile?.ranks?.combat !== undefined ? (
+                        <p class="text-text-primary text-sm font-medium">
+                          {getRankName('combat', userProfile.profile.ranks.combat)}
+                        </p>
+                      ) : (
+                        <p class="text-text-secondary text-sm">Not Available</p>
+                      )}
+                    </div>
+                    <div class="p-3 bg-bg-primary rounded border border-border">
+                      <label class="text-xs mb-1 block text-text-secondary">TRADE</label>
+                      {userProfile.profile?.ranks?.trade !== undefined ? (
+                        <p class="text-text-primary text-sm font-medium">
+                          {getRankName('trade', userProfile.profile.ranks.trade)}
+                        </p>
+                      ) : (
+                        <p class="text-text-secondary text-sm">Not Available</p>
+                      )}
+                    </div>
+                    <div class="p-3 bg-bg-primary rounded border border-border">
+                      <label class="text-xs mb-1 block text-text-secondary">EXPLORER</label>
+                      {userProfile.profile?.ranks?.explorer !== undefined ? (
+                        <p class="text-text-primary text-sm font-medium">
+                          {getRankName('explorer', userProfile.profile.ranks.explorer)}
+                        </p>
+                      ) : (
+                        <p class="text-text-secondary text-sm">Not Available</p>
+                      )}
+                    </div>
+                    <div class="p-3 bg-bg-primary rounded border border-border">
+                      <label class="text-xs mb-1 block text-text-secondary">CQC</label>
+                      {userProfile.profile?.ranks?.cqc !== undefined ? (
+                        <p class="text-text-primary text-sm font-medium">
+                          {getRankName('cqc', userProfile.profile.ranks.cqc)}
+                        </p>
+                      ) : (
+                        <p class="text-text-secondary text-sm">Not Available</p>
+                      )}
+                    </div>
+                  </div>
+                  {userProfile.profile?.ranks && (
+                    <div class="grid grid-cols-2 gap-4 mt-2">
+                      {userProfile.profile.ranks.empire !== undefined && (
+                        <div class="p-3 bg-bg-primary rounded border border-border">
+                          <label class="text-xs mb-1 block text-text-secondary">EMPIRE</label>
+                          <p class="text-text-primary text-sm font-medium">
+                            {getRankName('empire', userProfile.profile.ranks.empire)}
+                          </p>
+                        </div>
+                      )}
+                      {userProfile.profile.ranks.federation !== undefined && (
+                        <div class="p-3 bg-bg-primary rounded border border-border">
+                          <label class="text-xs mb-1 block text-text-secondary">FEDERATION</label>
+                          <p class="text-text-primary text-sm font-medium">
+                            {getRankName('federation', userProfile.profile.ranks.federation)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!userProfile.profile?.ranks && (
+                    <p class="text-text-secondary text-xs">
+                      Upload journal files in Settings to view your ranks.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <!-- Power Play Card -->
+              <div class="card">
+                <h3 class="mb-4">Power Play</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="mb-1 block">Allegiance</label>
+                    <p class="text-text-secondary text-sm">Not Available</p>
+                  </div>
+                  <div>
+                    <label class="mb-1 block">Power</label>
+                    <p class="text-text-secondary text-sm">Not Available</p>
+                  </div>
+                  <p class="text-text-secondary text-xs mt-4">
+                    Power Play data requires additional CAPI endpoints.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Additional Info -->
+            <div class="space-y-6">
+              <!-- Assets Card -->
+              <div class="card">
+                <h3 class="mb-4">Assets</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="mb-1 block">Registered Ships</label>
+                    <p class="text-text-secondary text-sm">Not Available</p>
+                  </div>
+                  <div>
+                    <label class="mb-1 block">Fleet Value</label>
+                    <p class="text-text-secondary text-sm">Not Available</p>
+                  </div>
+                  <p class="text-text-secondary text-xs mt-4">
+                    Ship data requires additional CAPI endpoints.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Quick Actions Card -->
+              <div class="card">
+                <h3 class="mb-4">Quick Actions</h3>
+                <div class="space-y-2">
+                  <Button variant="secondary" href="#" class="w-full justify-start">View Logs</Button>
+                  <Button variant="secondary" href="#" class="w-full justify-start">View Assets</Button>
+                  <Button variant="secondary" href="#" class="w-full justify-start">Settings</Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      ) : (
-        <!-- Link ED Account Card -->
-        <div class="card border-accent">
-          <h3 class="mb-4">Link Elite Dangerous Account</h3>
-          <p class="text-text-secondary mb-4">
-            Connect your Elite Dangerous account to view your commander data, credits, and statistics.
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <Button variant="primary" href="/auth/link">Link ED Account</Button>
-          </div>
+    ) : null}
+
+    {auth.isAuthenticated && userProfile && !hasCommanderData ? (
+      <!-- Link ED Account or Upload Journal -->
+      <div class="card border-accent">
+        <h3 class="mb-4">Get Commander Data</h3>
+        <p class="text-text-secondary mb-4">
+          Link your Elite Dangerous account via CAPI or upload journal files to view your commander data, credits, ranks, and statistics.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <Button variant="primary" href="/auth/link">Link ED Account</Button>
+          <Button variant="secondary" href="/settings">Upload Journal Files</Button>
         </div>
-      )
-    ) : (
+      </div>
+    ) : null}
+
+    {!auth.isAuthenticated ? (
       <!-- Quick Actions -->
       <div class="card">
         <h3 class="mb-4">Get Started</h3>
@@ -146,7 +407,44 @@ if (auth.isAuthenticated && auth.user) {
           <Button variant="secondary" href="/login">Login</Button>
         </div>
       </div>
-    )}
+    ) : null}
   </div>
 </DashboardLayout>
+
+<script>
+  // Handle refresh button with better UX
+  const refreshForm = document.getElementById('refresh-form');
+  const refreshBtn = document.getElementById('refresh-btn');
+  
+  if (refreshForm && refreshBtn) {
+    refreshForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const originalText = refreshBtn.textContent;
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = 'Refreshing...';
+      
+      try {
+        const response = await fetch('/api/commander/refresh', {
+          method: 'POST',
+        });
+        
+        if (response.ok) {
+          // Reload page to show updated data
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          alert('Failed to refresh data: ' + (data.error || 'Unknown error'));
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+        alert('Failed to refresh data. Please try again.');
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = originalText;
+      }
+    });
+  }
+</script>
 

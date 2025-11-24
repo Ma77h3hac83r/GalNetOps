@@ -1,4 +1,4 @@
-name = "galnetops-dashboard"
+name = "galnetops"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
@@ -8,6 +8,10 @@ pages_build_output_dir = "dist"
 [[kv_namespaces]]
 binding = "USERS"
 id = "bd48c579c7814b009f8ce62a765abcb5"
+
+[[kv_namespaces]]
+binding = "SYSTEMS"
+id = "1970f565ab9f4598b87868aea1c8a702"
 
 # Environment variables (set these in Cloudflare Dashboard)
 # For local dev, use: wrangler dev --env .env
