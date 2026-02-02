@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Semantic tokens for light/dark — switch in .dark so components stay theme-agnostic */
+:root {
+  --color-surface: #f8fafc;
+  --color-surface-elevated: #ffffff;
+  --color-content: #0f172a;
+  --color-content-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-ring-offset: #ffffff;
+}
+
+.dark {
+  --color-surface: #0f172a;
+  --color-surface-elevated: #1e293b;
+  --color-content: #f1f5f9;
+  --color-content-muted: #94a3b8;
+  --color-border: #334155;
+  --color-ring-offset: #0f172a;
+}
+
+/* Elite Dangerous theme - Orange & Black */
+.elite {
+  --color-surface: #0a0a0a;
+  --color-surface-elevated: #141414;
+  --color-content: #ff7100;
+  --color-content-muted: #b85000;
+  --color-border: #2a1a00;
+  --color-ring-offset: #0a0a0a;
+  --color-elite-accent: #ff7100;
+  --color-elite-accent-bright: #ff9100;
+  --color-elite-accent-dim: #cc5a00;
+  --color-elite-text: #ffb366;
+  --color-elite-text-muted: #996633;
+}
+
+/* Custom scrollbar for dark mode */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-dark {
+    scrollbar-color: #475569 #1e293b;
+  }
+
+  .scrollbar-light {
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+
+  .scrollbar-elite {
+    scrollbar-color: #ff7100 #141414;
+  }
+}
+
+/* Base styles */
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply antialiased;
+    background-color: var(--color-surface);
+    color: var(--color-content);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Remove default focus outlines and add custom ones */
+  *:focus {
+    @apply outline-none;
+  }
+
+  *:focus-visible {
+    @apply ring-2 ring-accent-500 ring-offset-2;
+    --tw-ring-offset-color: var(--color-ring-offset);
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  /* Titlebar drag region */
+  .titlebar-drag {
+    -webkit-app-region: drag;
+  }
+
+  .titlebar-no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  /* Tree view lines */
+  .tree-line {
+    @apply border-l-2 border-slate-300 dark:border-slate-600;
+  }
+
+  /* Value indicators */
+  .value-indicator {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium;
+  }
+
+  .value-high {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
+  }
+
+  .value-bio {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+  }
+
+  .value-geo {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+  }
+
+  /* Scan status badges */
+  .scan-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .scan-none {
+    @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400;
+  }
+
+  .scan-basic {
+    @apply bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+
+  .scan-detailed {
+    @apply bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400;
+  }
+
+  .scan-mapped {
+    @apply bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400;
+  }
+
+  /* Card component */
+  .card {
+    @apply rounded-lg shadow-sm;
+    background-color: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Button variants */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors;
+    @apply focus:ring-2 focus:ring-offset-2 focus:ring-accent-500;
+  }
+
+  .btn-primary {
+    @apply bg-accent-600 text-white hover:bg-accent-700;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-100 text-slate-700 hover:bg-slate-200;
+    @apply dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full px-3 py-2 rounded-lg focus:border-accent-500 focus:ring-1 focus:ring-accent-500;
+    background-color: var(--color-surface-elevated);
+    color: var(--color-content);
+    border: 1px solid var(--color-border);
+  }
+
+  .input::placeholder {
+    color: var(--color-content-muted);
+  }
+
+  /* Elite Dangerous theme overrides */
+  .elite .btn-primary {
+    @apply bg-orange-600 hover:bg-orange-500;
+  }
+
+  .elite .btn-secondary {
+    @apply bg-neutral-900 text-orange-400 hover:bg-neutral-800 border border-orange-700/50;
+  }
+
+  .elite .btn-ghost {
+    @apply hover:bg-orange-900/20;
+  }
+
+  .elite .card {
+    @apply border-orange-900/30;
+    background-color: var(--color-surface-elevated);
+  }
+
+  .elite .input {
+    @apply border-orange-900/50 focus:border-orange-500 focus:ring-orange-500;
+    background-color: #0d0d0d;
+  }
+
+  .elite .tree-line {
+    @apply border-orange-700/50;
+  }
+
+  .elite .value-high {
+    @apply bg-orange-900/40 text-orange-300;
+  }
+
+  .elite .scan-badge {
+    @apply border border-orange-800/50;
+  }
+
+  .elite .scan-none {
+    @apply bg-neutral-900 text-orange-400/60;
+  }
+
+  .elite .scan-basic {
+    @apply bg-orange-900/30 text-orange-400;
+  }
+
+  .elite .scan-detailed {
+    @apply bg-orange-800/40 text-orange-300;
+  }
+
+  .elite .scan-mapped {
+    @apply bg-orange-700/40 text-orange-200;
+  }
+
+  /* Elite theme text colors */
+  .elite .text-slate-900,
+  .elite .text-slate-800,
+  .elite .text-slate-700 {
+    color: var(--color-elite-text) !important;
+  }
+
+  .elite .text-slate-600,
+  .elite .text-slate-500,
+  .elite .text-slate-400 {
+    color: var(--color-elite-text-muted) !important;
+  }
+
+  /* Elite accent colors for interactive elements */
+  .elite .text-accent-600,
+  .elite .text-accent-500 {
+    color: var(--color-elite-accent) !important;
+  }
+
+  .elite .bg-accent-600,
+  .elite .bg-accent-500 {
+    background-color: var(--color-elite-accent) !important;
+  }
+
+  .elite .border-accent-500 {
+    border-color: var(--color-elite-accent) !important;
+  }
+
+  .elite .ring-accent-500 {
+    --tw-ring-color: var(--color-elite-accent) !important;
+  }
+
+  /* Elite theme link colors */
+  .elite a {
+    color: var(--color-elite-accent);
+  }
+
+  .elite a:hover {
+    color: var(--color-elite-accent-bright);
+  }
+}

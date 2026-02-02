@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+release/
+out/
+
+# IDE & editors
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite
+.vite/
+
+# Electron (local overrides; package.json holds canonical config)
+electron-builder.yml
+
+# Test
+coverage/
+
+# Database (development / local)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Folders
+resources/*/*.txt
+resources/*.psd
+logs/
+documentation/
+scripts/
+
+# Markdown files
+TODO.md
+SECURITY.md
+FEATURES.md
+VERSIONS.md
