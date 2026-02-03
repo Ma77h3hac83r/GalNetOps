@@ -1,8 +1,15 @@
 /**
- * Exobiology genus/species estimator from EXOBIOLOGY_SCAN_VALUES.md.
+ * Exobiology genus/species estimator.
+ * Data source: documentation/ED_data/Exobiological_Species via exobiologySpeciesData.
  * After FSS, when we know a body has biological signals but before DSS (no Genuses),
  * we can estimate possible genera and species from body + system parameters.
  */
+
+import {
+  buildEstimatorGenusRules,
+  type EstimatorGenusRule,
+  type EstimatorSpeciesRule,
+} from './exobiologySpeciesData';
 
 // Normalize atmosphere/journal strings to canonical form for rule matching.
 // ─── Normalization ───────────────────────────────────────────────────────────
@@ -110,7 +117,7 @@ function volcanismMatches(bodyVolc: string | null | undefined, spec: string): bo
   return list.some((v) => !/^none$/i.test(v) && b.includes(v));
 }
 
-// ─── Star class matching (species: "O", "B IV, B V", "A-Class (luminosity V+)" — we only have letter) ───────────────────
+// ─── Star class matching (species: "O", "B IV, B V", "A-Class (luminosity V+)" - we only have letter) ───────────────────
 
 function starClassMatches(letter: string, spec: string): boolean {
   if (!letter) return false;
@@ -126,301 +133,13 @@ function starClassMatches(letter: string, spec: string): boolean {
   return false;
 }
 
-// ─── Star-based variant colors (for genera that use parent star) ──────────────
-
-const ALEOIDA_STAR_COLORS: Record<string, string> = {
-  O: 'Grey', B: 'Yellow', A: 'Green', F: 'Teal', G: 'Lime', K: 'Turquoise', M: 'Emerald',
-  L: 'Lime', T: 'Sage', TTS: 'Mauve', Y: 'Teal', W: 'Grey', D: 'Indigo', N: 'Ocher',
-};
-const CACTOIDA_STAR_COLORS: Record<string, string> = {
-  O: 'Grey', A: 'Green', F: 'Yellow', G: 'Teal', K: 'Turquoise', M: 'Amethyst',
-  L: 'Mauve', T: 'Orange', TTS: 'Red', Y: 'Ocher', W: 'Indigo', D: 'Turquoise', N: 'Sage',
-};
-const CLYPEUS_STAR_COLORS: Record<string, string> = {
-  B: 'Maroon', A: 'Orange', F: 'Mauve', G: 'Amethyst', K: 'Grey', M: 'Turquoise',
-  L: 'Teal', Y: 'Green', D: 'Lime', N: 'Yellow',
-};
-const CONCHA_STAR_COLORS: Record<string, string> = {
-  B: 'Indigo', A: 'Teal', F: 'Grey', G: 'Turquoise', K: 'Red', L: 'Orange', Y: 'Yellow', N: 'Emerald',
-};
-const OSSEUS_STAR_COLORS: Record<string, string> = {
-  O: 'Turquoise', B: 'Grey', A: 'Yellow', F: 'Green', G: 'Lime', K: 'Turquoise, Indigo', M: 'Emerald',
-  L: 'Sage', T: 'Red', TTS: 'Maroon', Y: 'Mauve', W: 'Amethyst', D: 'Ocher', N: 'Indigo',
-};
-const FRUTEXA_STAR_COLORS: Record<string, string> = { ...OSSEUS_STAR_COLORS };
-const FUNGOIDA_STAR_COLORS: Record<string, string> = { ...OSSEUS_STAR_COLORS };
-const TUSSOCK_STAR_COLORS: Record<string, string> = { ...OSSEUS_STAR_COLORS };
-const TUBUS_STAR_COLORS: Record<string, string> = {
-  O: 'Grey', B: 'Lime', A: 'Green', F: 'Yellow', G: 'Teal', K: 'Emerald', M: 'Amethyst',
-  L: 'Mauve', T: 'Orange', TTS: 'Red', Y: 'Ocher', W: 'Indigo', D: 'Turquoise', N: 'Sage',
-};
-const STRATUM_STAR_COLORS: Record<string, string> = {
-  O: 'Grey', B: 'Emerald', A: 'Lime', F: 'Green', G: 'Yellow', K: 'Turquoise, Lime', M: 'Amethyst',
-  L: 'Mauve', T: 'Orange', TTS: 'Red', Y: 'Ocher', W: 'Indigo', D: 'Sage', N: 'Turquoise',
-};
-const FONTICULUA_STAR_COLORS: Record<string, string> = {
-  O: 'Grey', B: 'Lime', A: 'Green', F: 'Yellow', G: 'Teal', K: 'Emerald', M: 'Amethyst',
-  L: 'Mauve', T: 'Orange', TTS: 'Red', Y: 'Ocher', W: 'Indigo', D: 'Turquoise', N: 'Sage',
-  'Ae/Be': 'Maroon',
-};
-const FUMEROLA_STAR_COLORS: Record<string, string> = {
-  O: 'Green', B: 'Lime', A: 'Yellow', F: 'Aquamarine', G: 'Teal', K: 'Turquoise', M: 'Emerald',
-  L: 'Sage', T: 'Red', TTS: 'Maroon', Y: 'Mauve', W: 'Ocher', D: 'Indigo', N: 'Grey',
-};
-
 function getStarVariantColor(starLetter: string, map: Record<string, string>): string {
   return map[starLetter] || map[starLetter.toUpperCase()] || '';
 }
 
-// ─── Genus/Species rule definitions ──────────────────────────────────────────
+// ─── Genus rules from species data ────────────────────────────────────────────
 
-interface SpeciesRule {
-  species: string;
-  baseValue: number;
-  atmosphere?: string;
-  temp?: string;
-  planetType?: string;
-  volcanism?: string;
-  distMinLs?: number;
-  starClass?: string;
-  /** Material name -> variant color for Grade 3 Bacterium (e.g. Cadmium -> Gold) */
-  materialColors?: Record<string, string>;
-}
-
-interface GenusRule {
-  genus: string;
-  planetTypes?: string;   // comma-separated
-  maxGravity?: number;
-  atmosphere?: string;    // e.g. "None", "Carbon Dioxide, Water"
-  volcanism?: string;     // "Any" or specific
-  starClasses?: string;   // comma-separated
-  tempMin?: number;
-  tempMax?: number;
-  distMinLs?: number;
-  systemHas?: string[];   // 'elw'|'ammonia'|'ggWater'|'ggAmmonia'|'waterGiant'
-  species: SpeciesRule[];
-  starColors?: Record<string, string>;
-}
-
-const GENUS_RULES: GenusRule[] = [
-  {
-    genus: 'Aleoida',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Aleoida Arcus', baseValue: 7_252_500, atmosphere: 'Carbon Dioxide', temp: '175K - 180K' },
-      { species: 'Aleoida Coronamus', baseValue: 6_284_600, atmosphere: 'Carbon Dioxide', temp: '180K - 190K' },
-      { species: 'Aleoida Gravis', baseValue: 12_934_900, atmosphere: 'Carbon Dioxide', temp: '190K - 195K' },
-      { species: 'Aleoida Laminiae', baseValue: 3_385_200, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Aleoida Spica', baseValue: 3_385_200, atmosphere: 'Ammonia', temp: 'Any' },
-    ],
-    starColors: ALEOIDA_STAR_COLORS,
-  },
-  {
-    genus: 'Cactoida',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Cactoida Cortexum', baseValue: 3_667_600, atmosphere: 'Carbon Dioxide', temp: 'Any' },
-      { species: 'Cactoida Lapis', baseValue: 2_483_600, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Cactoida Peperatis', baseValue: 2_483_600, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Cactoida Pullulanta', baseValue: 3_667_600, atmosphere: 'Carbon Dioxide', temp: '180K - 195K' },
-      { species: 'Cactoida Vermis', baseValue: 16_202_800, atmosphere: 'Water', temp: 'Any' },
-    ],
-    starColors: CACTOIDA_STAR_COLORS,
-  },
-  {
-    genus: 'Clypeus',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    atmosphere: 'Carbon Dioxide, Water',
-    maxGravity: 0.27,
-    tempMin: 191,
-    species: [
-      { species: 'Clypeus Lacrimam', baseValue: 8_418_000, distMinLs: 0 },
-      { species: 'Clypeus Margaritus', baseValue: 11_873_200, distMinLs: 0 },
-      { species: 'Clypeus Speculumi', baseValue: 16_202_800, distMinLs: 2500 },
-    ],
-    starColors: CLYPEUS_STAR_COLORS,
-  },
-  {
-    genus: 'Concha',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Concha Aureolas', baseValue: 7_774_700, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Concha Labiata', baseValue: 2_352_400, atmosphere: 'Carbon Dioxide', temp: '< 190K' },
-      { species: 'Concha Biconcavis', baseValue: 16_777_215, atmosphere: 'Nitrogen' },
-      { species: 'Concha Renibus', baseValue: 4_572_400, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K' },
-    ],
-    starColors: CONCHA_STAR_COLORS,
-  },
-  {
-    genus: 'Osseus',
-    planetTypes: 'Rocky Body, High Metal Content Body, Rocky Ice Body',
-    species: [
-      { species: 'Osseus Cornibus', baseValue: 1_483_000, atmosphere: 'Carbon Dioxide', temp: '180K - 195K', planetType: 'Rocky, HMC' },
-      { species: 'Osseus Fractus', baseValue: 4_027_800, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky, HMC' },
-      { species: 'Osseus Pellebantus', baseValue: 9_739_000, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky, HMC' },
-      { species: 'Osseus Discus', baseValue: 12_934_900, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky, HMC' },
-      { species: 'Osseus Spiralis', baseValue: 2_404_700, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky, HMC' },
-      { species: 'Osseus Pumice', baseValue: 3_156_300, atmosphere: 'Methane, Argon, Nitrogen', temp: 'Any', planetType: 'Rocky Ice' },
-    ],
-    starColors: OSSEUS_STAR_COLORS,
-  },
-  {
-    genus: 'Frutexa',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Frutexa Acus', baseValue: 7_774_700, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body' },
-      { species: 'Frutexa Collum', baseValue: 1_639_800, atmosphere: 'Sulfur Dioxide', planetType: 'Rocky Body' },
-      { species: 'Frutexa Fera', baseValue: 1_632_500, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body' },
-      { species: 'Frutexa Flabellum', baseValue: 1_808_900, atmosphere: 'Ammonia', planetType: 'Rocky Body' },
-      { species: 'Frutexa Flammasis', baseValue: 10_326_000, atmosphere: 'Ammonia', planetType: 'Rocky Body' },
-      { species: 'Frutexa Metallicum', baseValue: 1_632_500, atmosphere: 'Ammonia, Carbon Dioxide', planetType: 'High Metal Content Body' },
-      { species: 'Frutexa Sponsae', baseValue: 5_988_000, atmosphere: 'Water', planetType: 'Rocky Body' },
-    ],
-    starColors: FRUTEXA_STAR_COLORS,
-  },
-  {
-    genus: 'Fungoida',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Fungoida Bullarum', baseValue: 3_703_200, atmosphere: 'Argon', temp: 'Any' },
-      { species: 'Fungoida Gelata', baseValue: 3_330_300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)' },
-      { species: 'Fungoida Setisis', baseValue: 1_670_100, atmosphere: 'Ammonia, Methane', temp: 'Any' },
-      { species: 'Fungoida Stabitis', baseValue: 2_680_300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)' },
-    ],
-    starColors: FUNGOIDA_STAR_COLORS,
-  },
-  {
-    genus: 'Tussock',
-    planetTypes: 'Rocky Body, Rocky Ice Body',
-    species: [
-      { species: 'Tussock Albata', baseValue: 3_252_500, atmosphere: 'Carbon Dioxide', temp: '175K - 180K' },
-      { species: 'Tussock Capillum', baseValue: 7_025_800, atmosphere: 'Methane, Argon', temp: 'Any' },
-      { species: 'Tussock Caputus', baseValue: 3_472_400, atmosphere: 'Carbon Dioxide', temp: '180K - 190K' },
-      { species: 'Tussock Catena', baseValue: 1_766_600, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Tussock Cultro', baseValue: 1_766_600, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Tussock Divisa', baseValue: 1_766_600, atmosphere: 'Ammonia', temp: 'Any' },
-      { species: 'Tussock Ignis', baseValue: 1_849_000, atmosphere: 'Carbon Dioxide', temp: '160K - 170K' },
-      { species: 'Tussock Pennata', baseValue: 5_853_800, atmosphere: 'Carbon Dioxide', temp: '145K - 155K' },
-      { species: 'Tussock Pennatis', baseValue: 1_000_000, atmosphere: 'Carbon Dioxide', temp: '< 195K' },
-      { species: 'Tussock Propagito', baseValue: 1_000_000, atmosphere: 'Carbon Dioxide', temp: '< 195K' },
-      { species: 'Tussock Serrati', baseValue: 4_447_100, atmosphere: 'Carbon Dioxide', temp: '170K - 175K' },
-      { species: 'Tussock Stigmasis', baseValue: 19_010_800, atmosphere: 'Sulfur Dioxide', temp: 'Any' },
-      { species: 'Tussock Triticum', baseValue: 7_774_700, atmosphere: 'Carbon Dioxide', temp: '190K - 195K' },
-      { species: 'Tussock Ventusa', baseValue: 3_277_700, atmosphere: 'Carbon Dioxide', temp: '155K - 160K' },
-      { species: 'Tussock Virgam', baseValue: 14_313_700, atmosphere: 'Water', temp: 'Any' },
-    ],
-    starColors: TUSSOCK_STAR_COLORS,
-  },
-  {
-    genus: 'Stratum',
-    tempMin: 166,
-    species: [
-      { species: 'Stratum Araneamus', baseValue: 2_448_900, atmosphere: 'Sulfur Dioxide', temp: '> 165K', planetType: 'Rocky' },
-      { species: 'Stratum Cucumisis', baseValue: 16_202_800, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky' },
-      { species: 'Stratum Excutitus', baseValue: 2_448_900, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky' },
-      { species: 'Stratum Frigus', baseValue: 2_637_500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky' },
-      { species: 'Stratum Laminamus', baseValue: 2_788_300, atmosphere: 'Ammonia', temp: '> 165K', planetType: 'Rocky' },
-      { species: 'Stratum Limaxus', baseValue: 1_362_000, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky' },
-      { species: 'Stratum Paleas', baseValue: 1_362_000, atmosphere: 'Carbon Dioxide, Sulfur Dioxide, Ammonia, Water', temp: '> 165K', planetType: 'Rocky' },
-      { species: 'Stratum Tectonicas', baseValue: 19_010_800, atmosphere: 'Any', temp: '> 165K', planetType: 'High Metal Content' },
-    ],
-    starColors: STRATUM_STAR_COLORS,
-  },
-  {
-    genus: 'Tubus',
-    planetTypes: 'Rocky Body, High Metal Content Body',
-    maxGravity: 0.15,
-    species: [
-      { species: 'Tubus Cavas', baseValue: 11_873_200, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky' },
-      { species: 'Tubus Compagibus', baseValue: 7_774_700, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky' },
-      { species: 'Tubus Conifer', baseValue: 2_415_500, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky' },
-      { species: 'Tubus Rosarium', baseValue: 2_637_500, atmosphere: 'Ammonia', temp: '> 160K', planetType: 'Rocky' },
-      { species: 'Tubus Sororibus', baseValue: 5_727_600, atmosphere: 'Ammonia, Carbon Dioxide', temp: '160K - 190K', planetType: 'High Metal Content Body' },
-    ],
-    starColors: TUBUS_STAR_COLORS,
-  },
-  {
-    genus: 'Fonticulua',
-    planetTypes: 'Icy Body, Rocky Ice Body',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Fonticulua Campestris', baseValue: 1_000_000, atmosphere: 'Argon' },
-      { species: 'Fonticulua Digitos', baseValue: 1_804_100, atmosphere: 'Methane' },
-      { species: 'Fonticulua Fluctus', baseValue: 16_777_215, atmosphere: 'Oxygen' },
-      { species: 'Fonticulua Lapida', baseValue: 3_111_000, atmosphere: 'Nitrogen' },
-      { species: 'Fonticulua Segmentatus', baseValue: 19_010_800, atmosphere: 'Neon' },
-      { species: 'Fonticulua Upupam', baseValue: 5_727_600, atmosphere: 'Argon-Rich' },
-    ],
-    starColors: FONTICULUA_STAR_COLORS,
-  },
-  {
-    genus: 'Bacterium',
-    // "thin atmosphere" — we treat any non-none as possible; species filter by exact atmo
-    species: [
-      { species: 'Bacterium Alcyoneum', baseValue: 1_658_500, atmosphere: 'Ammonia' },
-      { species: 'Bacterium Aurasus', baseValue: 1_000_000, atmosphere: 'Carbon Dioxide' },
-      { species: 'Bacterium Cerbrus', baseValue: 1_689_800, atmosphere: 'Water, Sulfur Dioxide' },
-      { species: 'Bacterium Acies', baseValue: 1_000_000, atmosphere: 'Neon' },
-      { species: 'Bacterium Bullaris', baseValue: 1_152_500, atmosphere: 'Methane' },
-      { species: 'Bacterium Informem', baseValue: 8_418_000, atmosphere: 'Nitrogen' },
-      { species: 'Bacterium Nebulus', baseValue: 9_116_600, atmosphere: 'Helium' },
-      { species: 'Bacterium Vesicula', baseValue: 1_000_000, atmosphere: 'Argon' },
-      { species: 'Bacterium Volu', baseValue: 7_774_700, atmosphere: 'Oxygen' },
-      { species: 'Bacterium Omentum', baseValue: 4_638_900, atmosphere: 'Neon', volcanism: 'Nitrogen, Ammonia' },
-      { species: 'Bacterium Scopulum', baseValue: 8_633_800, atmosphere: 'Neon', volcanism: 'Carbon, Methane' },
-      {
-        species: 'Bacterium Tela',
-        baseValue: 1_949_000,
-        atmosphere: 'Any',
-        volcanism: 'None, Helium, Iron, Silicate',
-        materialColors: { Cadmium: 'Gold', Mercury: 'Orange', Molybdenum: 'Yellow', Niobium: 'Magenta', Tungsten: 'Green', Tin: 'Cobalt' },
-      },
-      { species: 'Bacterium Verrata', baseValue: 3_897_000, atmosphere: 'Neon', volcanism: 'Water' },
-    ],
-    // Bacterium has star-based colors only for Alcyoneum, Aurasus, Cerbrus; temporarily omitted for simplicity
-  },
-  {
-    genus: 'Fumerola',
-    volcanism: 'Any', // requires volcanism
-    species: [
-      { species: 'Fumerola Aquatis', baseValue: 6_284_600, planetType: 'Icy, Rocky Ice', volcanism: 'Water' },
-      { species: 'Fumerola Carbosis', baseValue: 6_284_600, planetType: 'Icy, Rocky Ice', volcanism: 'Methane, Carbon Dioxide' },
-      { species: 'Fumerola Extremus', baseValue: 16_202_800, planetType: 'Rocky, High Metal Content', volcanism: 'Silicate, Iron, Rocky' },
-      { species: 'Fumerola Nitris', baseValue: 7_500_900, planetType: 'Icy, Rocky Ice', volcanism: 'Nitrogen, Ammonia' },
-    ],
-    starColors: FUMEROLA_STAR_COLORS,
-  },
-  {
-    genus: 'Recepta',
-    atmosphere: 'Sulfur Dioxide',
-    maxGravity: 0.27,
-    species: [
-      { species: 'Recepta Conditivus', baseValue: 14_313_700, planetType: 'Icy, Rocky Ice' },
-      { species: 'Recepta Deltahedronix', baseValue: 16_202_800, planetType: 'Rocky, High Metal Content' },
-      { species: 'Recepta Umbrux', baseValue: 12_934_900, planetType: 'All Types' },
-    ],
-    // Recepta uses rare material colors, not star
-  },
-  {
-    genus: 'Sinuous Tuber',
-    atmosphere: 'None',
-    volcanism: 'Any',
-    species: [
-      { species: 'Sinuous Tuber Albidum', baseValue: 3_425_600, planetType: 'Rocky', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Blatteum', baseValue: 1_514_500, planetType: 'Metal Rich, HMC', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Caeruleum', baseValue: 1_514_500, planetType: 'Rocky', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Lindigoticum', baseValue: 1_514_500, planetType: 'Rocky', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Prasinum', baseValue: 1_514_500, planetType: 'Metal Rich, HMC', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Roseus', baseValue: 1_514_500, planetType: 'Any', volcanism: 'Silicate Magma' },
-      { species: 'Sinuous Tuber Violaceum', baseValue: 1_514_500, planetType: 'Metal Rich, HMC', volcanism: 'Any' },
-      { species: 'Sinuous Tuber Viride', baseValue: 1_514_500, planetType: 'Metal Rich, HMC', volcanism: 'Any' },
-    ],
-  },
-];
+const GENUS_RULES: EstimatorGenusRule[] = buildEstimatorGenusRules();
 
 // Compute system-level flags (ELW, ammonia world, etc.) from body list; used by genus rules that require system composition.
 // ─── System flags from bodies ────────────────────────────────────────────────
@@ -530,6 +249,8 @@ export function estimatePossibleGenera(p: EstimatorParams): EstimatedGenus[] {
           .map((m) => s.materialColors![m.Name])
           .filter((c): c is string => !!c);
         if (colors.length > 0) variantColor = [...new Set(colors)].join(', ');
+      } else if (s.starColors) {
+        variantColor = getStarVariantColor(star, s.starColors);
       } else if (g.starColors) {
         variantColor = getStarVariantColor(star, g.starColors);
       }

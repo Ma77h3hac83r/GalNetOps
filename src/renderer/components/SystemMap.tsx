@@ -152,7 +152,7 @@ function formatStarClass(subType: string | undefined): string {
   if (s.startsWith('ms') || s.includes('m-s')) return 'MS-Class';
   if (s.startsWith('s ') || s.includes('s-type')) return 'S-Class';
   
-  // Y, L, T are brown dwarf classes—label clearly so they aren’t mistaken for main-sequence stars
+  // Y, L, T are brown dwarf classes-label clearly so they aren’t mistaken for main-sequence stars
   if (s.startsWith('y ') || s.includes('y-type')) return 'Y-Type (Brown Dwarf)';
   if (s.startsWith('l ') || s.includes('l-type')) return 'L-Type (Brown Dwarf)';
   if (s.startsWith('t ') || s.includes('t-type')) return 'T-Type (Brown Dwarf)';
@@ -1049,11 +1049,11 @@ function SystemMap({ iconScale, textScale }: SystemMapProps) {
         if (parentNode) {
           parentNode.children.push(node);
         } else {
-          // Parent not in tree yet — show as root star
+          // Parent not in tree yet - show as root star
           stars.push(node);
         }
       } else {
-        // No parent found — show as root star
+        // No parent found - show as root star
         stars.push(node);
       }
     }

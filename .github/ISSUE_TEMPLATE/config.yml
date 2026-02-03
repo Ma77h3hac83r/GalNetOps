@@ -2,4 +2,4 @@ blank_issues_enabled: true
 contact_links:
   - name: Questions & Discussion
     url: https://github.com/yourusername/GalNetOps/discussions
-    about: For general questions, ideas, or discussion — not bugs or feature requests.
+    about: For general questions, ideas, or discussion - not bugs or feature requests.

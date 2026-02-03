@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Semantic tokens for light/dark — switch in .dark so components stay theme-agnostic */
+/* Semantic tokens for light/dark - switch in .dark so components stay theme-agnostic */
 :root {
   --color-surface: #f8fafc;
   --color-surface-elevated: #ffffff;

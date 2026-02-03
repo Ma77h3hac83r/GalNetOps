@@ -4,8 +4,6 @@
 
 GalNetOps reads your journal files and gives you live system visualization, accurate scan values, route history, exobiology tracking, exploration statistics, and route planning - all in a modern, responsive interface.
 
-![GalNetOps Screenshot](public/images/readme_screenshot.png)
-
 ### **Why GalNetOps?**
 
 1. Real-time updates - FSS, DSS, and Genetic Sampling scans appear instantly as you explore.
@@ -25,14 +23,22 @@ GalNetOps reads your journal files and gives you live system visualization, accu
 #### **Explorer**
 Live system map with hierarchical body layout, scan status indicators, and a details panel showing orbital parameters, ring systems, biological species, and estimated values.
 
+![Explorer Screenshot](public/images/readme_screenshot.png)
+
 #### **Route History**
 Paginated jump log with filtering by date, session, or system name. Export to CSV/JSON or copy system names to clipboard.
+
+![Explorer Screenshot](public/images/route_history_screenshot.png)
 
 #### **Statistics**
 Exploration metrics and trends: systems visited, first discoveries, scan values over time, body type distribution, and exobiology progress.
 
+![Explorer Screenshot](public/images/statistics_screenshot.png)
+
 #### **Codex**
 Track your discoveries across biology, geology, anomalies, Thargoid, and Guardian categories.
+
+![Explorer Screenshot](public/images/codex_screenshot.png)
 
 #### **Settings**
 Journal path detection, theme selection, value thresholds, EDSM integration, database management, and journal backfill.

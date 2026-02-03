@@ -16,6 +16,9 @@
     "start": "electron .",
     "package": "npm run build && electron-builder",
     "package:win": "npm run build && electron-builder --win",
+    "package:linux": "npm run build && electron-builder --linux",
+    "package:linux:appimage": "npm run build && electron-builder --linux AppImage",
+    "package:linux:deb": "npm run build && electron-builder --linux deb",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "typecheck:main": "tsc -p tsconfig.main.json --noEmit",
@@ -65,9 +68,23 @@
       "target": [
         "nsis"
       ],
-      "icon": "resources/icon.ico",
+      "icon": "public/galnetops_icon.ico",
       "sign": null,
       "signAndEditExecutable": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "public/galnetops_icon.png"
+    },
+    "appImage": {
+      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+    },
+    "deb": {
+      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,

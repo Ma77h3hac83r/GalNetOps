@@ -29,4 +29,4 @@ If applicable, add screenshots to help explain the issue.
 - Elite Dangerous version: (Horizons / Odyssey)
 
 ## Additional Context
-Any other details — journal file snippets, error messages, etc.
+Any other details - journal file snippets, error messages, etc.

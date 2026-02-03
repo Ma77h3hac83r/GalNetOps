@@ -189,7 +189,7 @@ function ExplorerView() {
         </button>
       </div>
 
-      {/* Legend — colors from theme (tailwind.config.js) */}
+      {/* Legend - colors from theme (tailwind.config.js) */}
       <div className="text-[9px] text-slate-600 dark:text-slate-400">
         <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
           <span><span className="font-bold text-valuable">$$$</span> High Value</span>

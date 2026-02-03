@@ -1,0 +1,8 @@
+# Cloudflare Pages project for GalNetOps website
+# https://developers.cloudflare.com/pages/configuration/
+
+name = "galnetops-website"
+compatibility_date = "2024-12-01"
+
+# Directory containing built static assets (used by Cloudflare when building via Git; GitHub Action deploys dist/ directly)
+pages_build_output_dir = "./dist"

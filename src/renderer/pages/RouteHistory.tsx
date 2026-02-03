@@ -151,12 +151,12 @@ function RouteHistory() {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   const formatDistance = (ly: number): string => {
-    if (ly === 0) return '—';
+    if (ly === 0) return '-';
     return `${ly.toFixed(2)} ly`;
   };
 
   const formatFuel = (tons: number): string => {
-    if (tons === 0) return '—';
+    if (tons === 0) return '-';
     return `${tons.toFixed(2)} t`;
   };
 
@@ -186,7 +186,7 @@ function RouteHistory() {
 
   /** Show main sequence letter (e.g. K) when sub_type is long like "K (Yellow-Orange) Star". */
   const formatStarType = (subType: string | null): string => {
-    if (!subType) return '—';
+    if (!subType) return '-';
     const trimmed = subType.trim();
     const match = trimmed.match(/^([A-Za-z0-9]+)/);
     return match && match[1] ? match[1] : trimmed;
@@ -549,7 +549,7 @@ function RouteHistory() {
               {hasActiveFilters ? 'Filtered Distance' : 'Total Distance'}
             </div>
             <div className="text-2xl font-bold text-accent-600 dark:text-accent-400">
-              {totals ? `${formatLargeNumber(totals.totalDistance)} ly` : '—'}
+              {totals ? `${formatLargeNumber(totals.totalDistance)} ly` : '-'}
             </div>
           </div>
           <div className="card p-4">
@@ -557,7 +557,7 @@ function RouteHistory() {
               {hasActiveFilters ? 'Filtered Fuel' : 'Total Fuel Used'}
             </div>
             <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-              {totals ? `${formatLargeNumber(totals.totalFuel)} t` : '—'}
+              {totals ? `${formatLargeNumber(totals.totalFuel)} t` : '-'}
             </div>
           </div>
         </div>
@@ -653,34 +653,34 @@ function RouteHistory() {
                       {formatStarType(entry.primaryStarType)}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.bodyCount != null ? entry.bodyCount : '—'}
+                      {entry.bodyCount != null ? entry.bodyCount : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.elw > 0 ? entry.highValueBodies.elw : '—'}
+                      {entry.highValueBodies.elw > 0 ? entry.highValueBodies.elw : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.tww > 0 ? entry.highValueBodies.tww : '—'}
+                      {entry.highValueBodies.tww > 0 ? entry.highValueBodies.tww : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.thmc > 0 ? entry.highValueBodies.thmc : '—'}
+                      {entry.highValueBodies.thmc > 0 ? entry.highValueBodies.thmc : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.ammonia > 0 ? entry.highValueBodies.ammonia : '—'}
+                      {entry.highValueBodies.ammonia > 0 ? entry.highValueBodies.ammonia : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.trocky > 0 ? entry.highValueBodies.trocky : '—'}
+                      {entry.highValueBodies.trocky > 0 ? entry.highValueBodies.trocky : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.highValueBodies.ww > 0 ? entry.highValueBodies.ww : '—'}
+                      {entry.highValueBodies.ww > 0 ? entry.highValueBodies.ww : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.firstDiscovered > 0 ? entry.firstDiscovered : '—'}
+                      {entry.firstDiscovered > 0 ? entry.firstDiscovered : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.totalValue > 0 ? formatCredits(entry.totalValue) : '—'}
+                      {entry.totalValue > 0 ? formatCredits(entry.totalValue) : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left">
-                      {entry.estimatedDssValue > 0 ? formatCredits(entry.estimatedDssValue) : '—'}
+                      {entry.estimatedDssValue > 0 ? formatCredits(entry.estimatedDssValue) : '-'}
                     </td>
                     <td className="py-1 px-1 text-slate-600 dark:text-slate-300 text-sm tabular-nums text-left whitespace-nowrap border-l border-slate-200 dark:border-slate-600">
                       {formatDistance(entry.jumpDistance)}

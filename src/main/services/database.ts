@@ -1380,7 +1380,7 @@ export class DatabaseService {
 
     const parentType = keys[0];
     if (parentType === undefined) return null;
-    // Barycentres (Null) are not persisted as bodies—we only get ScanBaryCentre, not Scan.
+    // Barycentres (Null) are not persisted as bodies-we only get ScanBaryCentre, not Scan.
     // Storing their bodyId would create a dangling parent_id. Use null so the UI can
     // resolve the effective parent from rawJson (e.g. findActualParent skips missing Nulls).
     if (parentType === 'Null') return null;

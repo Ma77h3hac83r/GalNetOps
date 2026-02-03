@@ -285,31 +285,31 @@ function SystemDetailModal({ systemId, onClose, onLoadInExplorer }: SystemDetail
                             ) : body.scanType === 'Detailed' ? (
                               <span className="text-indigo-600 dark:text-indigo-400" title="FSS Scanned">S</span>
                             ) : (
-                              <span className="text-slate-300 dark:text-slate-500">—</span>
+                              <span className="text-slate-300 dark:text-slate-500">-</span>
                             )}
                           </td>
                           <td className="py-1.5 px-1 text-center">
-                            {body.discoveredByMe ? <span className="text-emerald-600 dark:text-emerald-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.discoveredByMe ? <span className="text-emerald-600 dark:text-emerald-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-center">
-                            {body.mappedByMe ? <span className="text-purple-600 dark:text-purple-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.mappedByMe ? <span className="text-purple-600 dark:text-purple-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-center">
-                            {body.landable ? <span className="text-amber-600 dark:text-amber-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.landable ? <span className="text-amber-600 dark:text-amber-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-center">
-                            {body.terraformable ? <span className="text-cyan-600 dark:text-cyan-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.terraformable ? <span className="text-cyan-600 dark:text-cyan-400">✓</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-center">
                             {body.atmosphereType && body.atmosphereType !== 'None' && body.atmosphereType !== 'No atmosphere'
                               ? <span className="text-sky-600 dark:text-sky-400">✓</span>
-                              : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                              : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-right tabular-nums">
-                            {body.bioSignals > 0 ? <span className="text-green-600 dark:text-green-400">{body.bioSignals}</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.bioSignals > 0 ? <span className="text-green-600 dark:text-green-400">{body.bioSignals}</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-right tabular-nums">
-                            {body.geoSignals > 0 ? <span className="text-amber-700 dark:text-amber-500">{body.geoSignals}</span> : <span className="text-slate-300 dark:text-slate-500">—</span>}
+                            {body.geoSignals > 0 ? <span className="text-amber-700 dark:text-amber-500">{body.geoSignals}</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className={`py-1.5 px-2 text-right tabular-nums font-medium ${body.scanValue >= 1000000 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-600 dark:text-slate-400'}`}>
                             {formatCredits(body.scanValue)}
