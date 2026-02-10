@@ -10,6 +10,7 @@ import {
   type EstimatorGenusRule,
   type EstimatorSpeciesRule,
 } from './exobiologySpeciesData';
+import { normalizePlanetClass } from './normalization';
 
 // Normalize atmosphere/journal strings to canonical form for rule matching.
 // ─── Normalization ───────────────────────────────────────────────────────────
@@ -18,29 +19,77 @@ function normalizeAtmosphere(s: string | null | undefined): string {
   if (!s || s === 'None' || /no\s+atmosphere/i.test(s)) return 'None';
   const n = s.trim().toLowerCase();
   const map: Record<string, string> = {
-    'carbon dioxide': 'Carbon Dioxide', 'carbondioxide': 'CarbonDioxide',
+    'carbon dioxide': 'Carbon Dioxide', carbondioxide: 'Carbon Dioxide',
     'ammonia': 'Ammonia', 'water': 'Water', 'oxygen': 'Oxygen', 'nitrogen': 'Nitrogen',
     'methane': 'Methane', 'argon': 'Argon', 'helium': 'Helium', 'neon': 'Neon',
-    'sulfur dioxide': 'Sulfur Dioxide', 'sulphur dioxide': 'Sulfur Dioxide',
+    'sulfur dioxide': 'Sulfur Dioxide', 'sulphur dioxide': 'Sulfur Dioxide', sulphurdioxide: 'Sulfur Dioxide', sulfurdioxide: 'Sulfur Dioxide',
     'argon-rich': 'Argon-Rich',
   };
   return map[n] || s;
 }
 
-function normalizePlanetType(s: string | undefined): string {
-  if (!s) return '';
-  const n = s.toLowerCase();
-  if (/rocky\s*(body|ice|ice body)?/i.test(n) && !/rocky\s*ice/i.test(n)) return 'Rocky Body';
-  if (/rocky\s*ice|rocky\s*ice\s*body/i.test(n)) return 'Rocky Ice Body';
-  if (/high\s*metal|hmc/i.test(n)) return 'High Metal Content Body';
-  if (/metal\s*rich|metal-rich|metalrich/i.test(n)) return 'Metal Rich Body';
-  if (/icy\s*body|icy\s+body/i.test(n)) return 'Icy Body';
-  if (/earth-like|earthlike|elw/i.test(n)) return 'Earth-Like World';
-  if (/ammonia\s*world/i.test(n)) return 'Ammonia World';
-  if (/water\s*giant/i.test(n)) return 'Water Giant';
-  if (/gas\s*giant.*water|water.*gas\s*giant/i.test(n)) return 'Gas Giant with Water-Based Life';
-  if (/gas\s*giant.*ammonia|ammonia.*gas\s*giant/i.test(n)) return 'Gas Giant with Ammonia-Based Life';
-  return s;
+/** Variant name aliases for localization (journal uses player's language, e.g. German, Dutch, French, Italian, Spanish, etc.) and alternate/canonical spellings. */
+const VARIANT_ALIASES: Record<string, string> = {
+	smaragd: 'emerald', smaragdgroen: 'emerald', émeraude: 'emerald', smeraldo: 'emerald', esmeralda: 'emerald',
+	grau: 'grey', grijs: 'grey', gris: 'grey', grigio: 'grey',
+	grün: 'green', gruen: 'green', groen: 'green', vert: 'green', verde: 'green',
+	dunkelgrün: 'dark green', dunkelgruen: 'dark green', donkergroen: 'dark green', vertfonce: 'dark green', verde_scuro: 'dark green', verdescuro: 'dark green', verdeoscuro: 'dark green', verdeoscura: 'dark green',
+	hellgrün: 'light green', hellgruen: 'light green', lichtgroen: 'light green', vertclair: 'light green', verdechiaro: 'light green', verde_chiaro: 'light green', verdeclaro: 'light green', verdeclara: 'light green',
+	gelb: 'yellow', geel: 'yellow', jaune: 'yellow', giallo: 'yellow', amarillo: 'yellow',
+	goldgelb: 'golden yellow', goudgeel: 'golden yellow', jauneor: 'golden yellow', giallo_oro: 'golden yellow', amarillodorado: 'golden yellow',
+	gold: 'gold', goud: 'gold', doré: 'gold', oro: 'gold', dorado: 'gold',
+	blau: 'blue', blauw: 'blue', bleu: 'blue', blu: 'blue', azul: 'blue',
+	dunkelblau: 'dark blue', donkerblauw: 'dark blue', bleufoncé: 'dark blue', blu_scuro: 'dark blue', bluscuro: 'dark blue', azuloscuro: 'dark blue',
+	hellblau: 'light blue', lichtblauw: 'light blue', bleuclair: 'light blue', bluchiaro: 'light blue', blu_chiaro: 'light blue', azulclaro: 'light blue',
+	türkis: 'turquoise', tuerkis: 'turquoise', turkoois: 'turquoise', turquoise: 'turquoise', turchese: 'turquoise', turquesa: 'turquoise',
+	orange: 'orange', oranje: 'orange', arancione: 'orange', naranja: 'orange',
+	dunkelorange: 'dark orange', donkeroranje: 'dark orange', orangerfoncé: 'dark orange', arancionescuro: 'dark orange', naranjaoscuro: 'dark orange',
+	rot: 'red', rood: 'red', rouge: 'red', rosso: 'red', rojo: 'red',
+	rosa: 'pink', pink: 'pink', roze: 'pink', rose: 'pink',
+	violett: 'violet', violet: 'violet', paars: 'violet', viola: 'violet', violeta: 'violet', lila: 'violet',
+	purpur: 'purple', pourpre: 'purple', porpora: 'purple', púrpura: 'purple', purpura: 'purple',
+	braun: 'brown', bruin: 'brown', marron: 'brown', marrone: 'brown', marrón: 'brown',
+	ocker: 'ocher', oker: 'ocher', ocre: 'ocher', ocra: 'ocher',
+	ockergelb: 'ochre yellow', okergeel: 'ochre yellow', jauneocre: 'ochre yellow', giallo_ocre: 'ochre yellow', amarilloocre: 'ochre yellow',
+	beige: 'beige',
+	schwarz: 'black', zwart: 'black', noir: 'black', nero: 'black', negro: 'black',
+	weiss: 'white', weiß: 'white', wit: 'white', blanc: 'white', bianco: 'white', blanco: 'white',
+	silber: 'silver', silbrig: 'silver', zilver: 'silver', zilverkleurig: 'silver',
+	argent: 'silver', argenté: 'silver', argento: 'silver', argentato: 'silver', plata: 'silver', plateado: 'silver',
+	bronze: 'bronze', brons: 'bronze', bronzo: 'bronze', bronce: 'bronze',
+	kupfer: 'copper', koper: 'copper', cuivre: 'copper', rame: 'copper', cobre: 'copper',
+	limette: 'lime', limoen: 'lime', citronvert: 'lime', lime: 'lime', lima: 'lime',
+	cyan: 'cyan', cyaan: 'cyan', ciano: 'cyan', cian: 'cyan',
+	magenta: 'magenta',
+	creme: 'cream', crème: 'cream', crema: 'cream',
+	// English multi-word canonical forms (identity mappings so full-string lookup works for English journals)
+	'dark green': 'dark green', 'light green': 'light green', 'dark blue': 'dark blue', 'light blue': 'light blue',
+	'dark orange': 'dark orange', 'golden yellow': 'golden yellow', 'ochre yellow': 'ochre yellow',
+};
+
+/** Format genus + species + variant for display, avoiding duplication when variant is "Genus Species - Color". */
+export function formatScannedSpecies(genus: string, species: string, variant: string | null | undefined): string {
+  if (!variant) return species;
+  const color = variant.includes(' - ') ? (variant.split(' - ').pop()?.trim() ?? variant) : variant;
+  const base = species.startsWith(genus + ' ') ? species : `${genus} ${species}`.trim();
+  return `${base} ${color}`.trim();
+}
+
+/** Normalize variant name for comparison; maps localized names (e.g. German) to canonical English.
+ *  Handles journal variants in "Genus Species - Color" format by extracting the color part first,
+ *  then normalizing multi-word colors (e.g. "Dark Green") and localized names (e.g. "Dunkelgrün"). */
+export function normalizeVariantForComparison(variant: string | null | undefined): string {
+  if (!variant) return '';
+  // Extract color from "Genus Species - Color" format (after last " - ")
+  const dashIdx = variant.lastIndexOf(' - ');
+  const colorPart = dashIdx >= 0 ? variant.slice(dashIdx + 3).trim() : variant.trim();
+  if (!colorPart) return '';
+  // Try the full color string first (handles multi-word colors like "Dark Green")
+  const fullLower = colorPart.toLowerCase();
+  if (VARIANT_ALIASES[fullLower]) return VARIANT_ALIASES[fullLower]!;
+  // Fall back to first word for single-word colors and localized names
+  const first = colorPart.split(/[\s–\-]+/)[0]?.toLowerCase() ?? '';
+  return (VARIANT_ALIASES[first] ?? first).toLowerCase();
 }
 
 /** Extract star class letter from subType, e.g. "F", "K (Orange)", "M Red dwarf", "Neutron". */
@@ -95,14 +144,11 @@ function atmosphereMatches(bodyAtmo: string, spec: string): boolean {
 
 // ─── Planet type matching ────────────────────────────────────────────────────
 
-function planetTypeMatches(bodyType: string, spec: string): boolean {
-  const b = normalizePlanetType(bodyType).toLowerCase();
-  const list = spec.split(',').map((x) => {
-    let p = x.trim().toLowerCase().replace(/-/g, ' ');
-    if (p === 'hmc') p = 'high metal content';
-    return p;
-  });
-  return list.some((p) => b.includes(p) || p.includes(b));
+function planetTypeMatches(bodySubType: string, spec: string): boolean {
+  const bodyCanonical = normalizePlanetClass(bodySubType);
+  if (!bodyCanonical) return false;
+  const specCanonicals = spec.split(',').map((x) => normalizePlanetClass(x.trim()));
+  return specCanonicals.some((p) => p === bodyCanonical);
 }
 
 // ─── Volcanism matching ──────────────────────────────────────────────────────
@@ -137,9 +183,15 @@ function getStarVariantColor(starLetter: string, map: Record<string, string>): s
   return map[starLetter] || map[starLetter.toUpperCase()] || '';
 }
 
-// ─── Genus rules from species data ────────────────────────────────────────────
+// ─── Genus rules from species data (lazy to avoid circular init in main process) ────────────────────────────────────────────
 
-const GENUS_RULES: EstimatorGenusRule[] = buildEstimatorGenusRules();
+let _genusRules: EstimatorGenusRule[] | null = null;
+function getGenusRules(): EstimatorGenusRule[] {
+  if (_genusRules === null) {
+    _genusRules = buildEstimatorGenusRules();
+  }
+  return _genusRules;
+}
 
 // Compute system-level flags (ELW, ammonia world, etc.) from body list; used by genus rules that require system composition.
 // ─── System flags from bodies ────────────────────────────────────────────────
@@ -153,13 +205,13 @@ export interface SystemHas {
 }
 
 export function computeSystemHas(bodies: { subType?: string }[]): SystemHas {
-  const types = new Set(bodies.map((b) => normalizePlanetType(b.subType).toLowerCase()));
+  const types = new Set(bodies.map((b) => normalizePlanetClass(b.subType)));
   return {
-    elw: types.has('earth-like world'),
-    ammoniaWorld: types.has('ammonia world'),
-    ggWater: types.has('gas giant with water-based life'),
-    ggAmmonia: types.has('gas giant with ammonia-based life'),
-    waterGiant: types.has('water giant'),
+    elw: types.has('earth_like_world'),
+    ammoniaWorld: types.has('ammonia_world'),
+    ggWater: types.has('gas_giant_with_water_based_life'),
+    ggAmmonia: types.has('gas_giant_with_ammonia_based_life'),
+    waterGiant: types.has('water_giant'),
   };
 }
 
@@ -207,7 +259,7 @@ export interface EstimatedGenus {
 
 export function estimatePossibleGenera(p: EstimatorParams): EstimatedGenus[] {
   const atmo = normalizeAtmosphere(p.atmosphere);
-  const pType = normalizePlanetType(p.planetType);
+  const pType = normalizePlanetClass(p.planetType);
   const tempK = p.tempK != null && Number.isFinite(p.tempK) ? p.tempK : null;
   const grav = p.gravityG != null && Number.isFinite(p.gravityG) ? p.gravityG : null;
   const distLs = p.distanceLS != null && Number.isFinite(p.distanceLS) ? p.distanceLS : 0;
@@ -215,10 +267,10 @@ export function estimatePossibleGenera(p: EstimatorParams): EstimatedGenus[] {
 
   const out: EstimatedGenus[] = [];
 
-  for (const g of GENUS_RULES) {
+  for (const g of getGenusRules()) {
     // Genus-level conditions
     if (g.planetTypes && !planetTypeMatches(pType, g.planetTypes)) continue;
-    if (g.maxGravity != null && (grav == null || grav > g.maxGravity)) continue;
+    if (g.maxGravity != null && grav != null && grav > g.maxGravity) continue;
     if (g.atmosphere != null && !atmosphereMatches(atmo, g.atmosphere)) continue;
     if (g.volcanism != null && !volcanismMatches(p.volcanism, g.volcanism)) continue;
     if (g.starClasses != null) {
@@ -245,8 +297,17 @@ export function estimatePossibleGenera(p: EstimatorParams): EstimatedGenus[] {
 
       let variantColor = '';
       if (s.materialColors && p.materials && p.materials.length > 0) {
+        const matMap = s.materialColors;
         const colors = p.materials
-          .map((m) => s.materialColors![m.Name])
+          .map((m) => {
+            const name = m.Name?.trim();
+            if (!name) return undefined;
+            const direct = matMap[name];
+            if (direct) return direct;
+            const lower = name.toLowerCase();
+            const key = Object.keys(matMap).find((k) => k.toLowerCase() === lower);
+            return key != null ? matMap[key] : undefined;
+          })
           .filter((c): c is string => !!c);
         if (colors.length > 0) variantColor = [...new Set(colors)].join(', ');
       } else if (s.starColors) {

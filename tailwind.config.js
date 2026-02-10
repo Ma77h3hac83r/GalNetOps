@@ -44,22 +44,26 @@ export default {
           950: '#431407',
         },
         // Status / legend colors (use in ExplorerView legend and elsewhere)
-        valuable: '#f59e0b', // Amber for $$$ indicators
-        'value-medium': '#f97316', // Orange for $ medium
-        biological: '#22c55e', // Green for bio signals
-        'legend-bio': '#4ade80', // Lighter green for legend B
-        geological: '#92400e', // Brown for geo (legend)
+        discovered: '#a855f7', // Purple – FD First Discovered
+        mapped: '#a855f7', // Purple – FM First Mapped
+        footfall: '#a855f7', // Purple – FF First Footfall
+        dss: '#ec4899', // Pink – S FSS Scanned
+        'mapped-alt': '#ec4899', // Pink – M DSS Mapped
+        valuable: '#eab308', // Gold – $$$ High Value
+        'planet-highlight': '#eab308', // Gold square background for Planet Highlight
+        'value-medium': '#94a3b8', // Silver – $$ Medium Value
+        'value-low': '#b45309', // Bronze – $ Low Value
+        landable: '#f97316', // Orange – L Landable
+        atmosphere: '#38bdf8', // Sky Blue – A Atmosphere
+        biological: '#22c55e', // Green – T Terraformable
+        geological: '#92400e', // Brown – G Geological
+        'legend-bio': '#14b8a6', // Teal – B Biological
+        human: '#7dd3fc', // Light Blue – Hu Human Signals
+        thargoid: '#14532d', // Dark Green – Th Thargoid Signals
+        guardian: '#1e40af', // Dark Blue – Ga Guardian Signals
+        // Legacy / other use
         'geo-red': '#ef4444', // Red for geo signals
-        terraformable: '#06b6d4', // Cyan for terraformable
-        discovered: '#a855f7', // Purple for first discovered
-        mapped: '#ec4899', // Pink for first mapped
-        human: '#3b82f6', // Blue for human signals
-        guardian: '#1e40af', // Blue for guardian
-        thargoid: '#166534', // Green for thargoid
-        landable: '#d97706', // Amber for landable
-        atmosphere: '#38bdf8', // Sky for atmosphere
-        dss: '#7c3aed', // Violet for DSS scanned
-        'mapped-alt': '#db2777', // Pink for mapped (alt)
+        terraformable: '#06b6d4', // Cyan (alias)
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

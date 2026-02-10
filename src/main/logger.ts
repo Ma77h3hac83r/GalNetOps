@@ -11,7 +11,8 @@ export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 export function isDev(): boolean {
   try {
     return !app.isPackaged;
-  } catch {
+  } catch (e: unknown) {
+    // app not available (e.g. in test); fall back to env
     return process.env.NODE_ENV === 'development';
   }
 }

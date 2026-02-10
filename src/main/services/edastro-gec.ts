@@ -60,7 +60,7 @@ export async function getGecPoiList(): Promise<Array<{ name: string; galMapSearc
     cacheTimestamp = now;
     logInfo('EDAstro GEC', isDev() ? `Cached ${pois.length} POIs` : 'POI list cached');
     return pois.map((p) => ({ name: p.name, galMapSearch: p.galMapSearch }));
-  } catch (err) {
+  } catch (err: unknown) {
     logError('EDAstro GEC', 'Fetch failed', err);
     return cachedPois != null
       ? cachedPois.map((p) => ({ name: p.name, galMapSearch: p.galMapSearch ?? '' }))

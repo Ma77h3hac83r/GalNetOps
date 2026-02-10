@@ -1,7 +1,9 @@
 /** Modal showing a system's summary and body list (from DB by systemId); optional "Load into Explorer" to set current system and fetch bodies. */
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { System, CelestialBody } from '@shared/types';
+import { planetClassToDisplay, starTypeToDisplay } from '@shared/normalization';
 import { parseSystem, parseCelestialBodyArray } from '../utils/boundarySchemas';
+import { useAppStore } from '../stores/appStore';
 
 interface SystemDetailModalProps {
   systemId: number;
@@ -10,7 +12,10 @@ interface SystemDetailModalProps {
   onLoadInExplorer?: (system: System) => void;
 }
 
+const BIO_COLOR = '#14b8a6';
+
 function SystemDetailModal({ systemId, onClose, onLoadInExplorer }: SystemDetailModalProps) {
+  const bioSignalsHighlightThreshold = useAppStore((s) => s.bioSignalsHighlightThreshold);
   const [system, setSystem] = useState<System | null>(null);
   const [bodies, setBodies] = useState<CelestialBody[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -273,8 +278,8 @@ function SystemDetailModal({ systemId, onClose, onLoadInExplorer }: SystemDetail
                           <td className="py-1.5 px-2 font-medium text-slate-800 dark:text-slate-100 truncate max-w-[80px]" title={body.name}>
                             {system ? getBodyDesignationForSort(body, system.name) : body.name}
                           </td>
-                          <td className="py-1.5 px-2 text-slate-600 dark:text-slate-300 truncate max-w-[120px]" title={body.subType || body.bodyType}>
-                            {body.subType || body.bodyType}
+                          <td className="py-1.5 px-2 text-slate-600 dark:text-slate-300 truncate max-w-[120px]" title={body.bodyType === 'Star' ? starTypeToDisplay(body.subType) || body.bodyType : planetClassToDisplay(body.subType) || body.bodyType}>
+                            {body.bodyType === 'Star' ? starTypeToDisplay(body.subType) || body.bodyType : planetClassToDisplay(body.subType) || body.bodyType}
                           </td>
                           <td className="py-1.5 px-2 text-right text-slate-600 dark:text-slate-300 tabular-nums">
                             {formatDistance(body.distanceLS)}
@@ -306,7 +311,20 @@ function SystemDetailModal({ systemId, onClose, onLoadInExplorer }: SystemDetail
                               : <span className="text-slate-300 dark:text-slate-500">-</span>}
                           </td>
                           <td className="py-1.5 px-1 text-right tabular-nums">
-                            {body.bioSignals > 0 ? <span className="text-green-600 dark:text-green-400">{body.bioSignals}</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}
+                            {body.bioSignals > 0 ? (
+                              body.bioSignals >= bioSignalsHighlightThreshold ? (
+                                <span
+                                  className="rounded px-1.5 py-0.5 font-medium text-white"
+                                  style={{ backgroundColor: BIO_COLOR }}
+                                >
+                                  {body.bioSignals}
+                                </span>
+                              ) : (
+                                <span className="text-green-600 dark:text-green-400">{body.bioSignals}</span>
+                              )
+                            ) : (
+                              <span className="text-slate-300 dark:text-slate-500">-</span>
+                            )}
                           </td>
                           <td className="py-1.5 px-1 text-right tabular-nums">
                             {body.geoSignals > 0 ? <span className="text-amber-700 dark:text-amber-500">{body.geoSignals}</span> : <span className="text-slate-300 dark:text-slate-500">-</span>}

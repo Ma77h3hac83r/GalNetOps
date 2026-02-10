@@ -1,4 +1,5 @@
 /** Custom title bar: app title, nav tabs (Explorer/Route History/Statistics/Codex/Settings/Feedback), theme cycle, and window minimize/maximize/close. */
+import { useEffect, useState } from 'react';
 import { useAppStore, type AppView } from '../stores/appStore';
 
 function TitleBar() {
@@ -6,6 +7,25 @@ function TitleBar() {
   const setTheme = useAppStore((state) => state.setTheme);
   const currentView = useAppStore((state) => state.currentView);
   const setCurrentView = useAppStore((state) => state.setCurrentView);
+  const [galacticRecordsChecking, setGalacticRecordsChecking] = useState(false);
+
+  useEffect(() => {
+    const unsubStart = window.electron.onGalacticRecordsCheckStarted(() =>
+      setGalacticRecordsChecking(true)
+    );
+    const unsubFinish = window.electron.onGalacticRecordsCheckFinished(() =>
+      setGalacticRecordsChecking(false)
+    );
+    window.electron.getGalacticRecordsStatus().then((s) => {
+      if (s.isChecking) setGalacticRecordsChecking(true);
+    }).catch(() => {
+      // Ignore: status check may fail if data not yet available
+    });
+    return () => {
+      unsubStart();
+      unsubFinish();
+    };
+  }, []);
 
   const handleMinimize = () => window.electron.minimize();
   const handleMaximize = () => window.electron.maximize();
@@ -75,6 +95,15 @@ function TitleBar() {
       ),
     },
     {
+      id: 'route-planner',
+      label: 'Route Planner',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+      ),
+    },
+    {
       id: 'statistics',
       label: 'Statistics',
       icon: (
@@ -115,86 +144,119 @@ function TitleBar() {
   ];
 
   return (
-    <header className="titlebar-drag h-10 flex items-center justify-between px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-      {/* App Title */}
-      <div className="flex items-center space-x-2">
-        <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-          GalNetOps
-        </span>
-      </div>
+    <div className="flex flex-col">
+      <header className="titlebar-drag h-10 flex items-center justify-between px-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+        {/* App Title */}
+        <div className="flex items-center space-x-2">
+          <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            GalNetOps
+          </span>
+        </div>
 
-      {/* Navigation */}
-      <nav className="titlebar-no-drag flex items-center space-x-1" aria-label="Main navigation">
-        {navItems.map((item) => {
-          const isLink = 'href' in item;
-          const isActive = !isLink && currentView === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() =>
-                isLink ? window.electron.openExternal(item.href) : setCurrentView(item.id)
-              }
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded text-sm transition-colors ${
-                isActive
-                  ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-              title={item.label}
-              aria-label={item.label}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              {item.icon}
-              <span className="hidden md:inline">{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+        {/* Navigation */}
+        <nav className="titlebar-no-drag flex items-center space-x-1" aria-label="Main navigation">
+          {navItems.map((item) => {
+            const isLink = 'href' in item;
+            const isActive = !isLink && currentView === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() =>
+                  isLink ? window.electron.openExternal(item.href) : setCurrentView(item.id)
+                }
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded text-sm transition-colors ${
+                  isActive
+                    ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+                title={item.label}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.icon}
+                <span className="hidden md:inline">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-      {/* Controls */}
-      <div className="titlebar-no-drag flex items-center space-x-1">
-        {/* Theme Toggle */}
-        <button
-          onClick={cycleTheme}
-          className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
-          title={`Theme: ${theme}`}
-          aria-label={`Cycle theme (current: ${theme ?? 'system'})`}
+        {/* Controls */}
+        <div className="titlebar-no-drag flex items-center space-x-1">
+          {/* Theme Toggle */}
+          <button
+            onClick={cycleTheme}
+            className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
+            title={`Theme: ${theme}`}
+            aria-label={`Cycle theme (current: ${theme ?? 'system'})`}
+          >
+            {getThemeIcon()}
+          </button>
+
+          {/* Window Controls */}
+          <button
+            onClick={handleMinimize}
+            className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
+            aria-label="Minimize window"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+
+          <button
+            onClick={handleMaximize}
+            className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
+            aria-label="Maximize window"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+          </button>
+
+          <button
+            onClick={handleClose}
+            className="p-2 rounded hover:bg-red-500 hover:text-white text-slate-500 dark:text-slate-400"
+            aria-label="Close window"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      {/* Galactic records check banner */}
+      {galacticRecordsChecking && (
+        <div
+          className="flex items-center justify-center gap-2 px-4 py-1.5 text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border-b border-amber-200 dark:border-amber-800"
+          role="status"
+          aria-live="polite"
         >
-          {getThemeIcon()}
-        </button>
-
-        {/* Window Controls */}
-        <button
-          onClick={handleMinimize}
-          className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
-          aria-label="Minimize window"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          <svg
+            className="w-3.5 h-3.5 animate-spin shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
           </svg>
-        </button>
-
-        <button
-          onClick={handleMaximize}
-          className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400"
-          aria-label="Maximize window"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-          </svg>
-        </button>
-
-        <button
-          onClick={handleClose}
-          className="p-2 rounded hover:bg-red-500 hover:text-white text-slate-500 dark:text-slate-400"
-          aria-label="Close window"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-    </header>
+          <span>Updating galactic records from EDAstro…</span>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -1,4 +1,6 @@
 /** Renders a colored circle icon for a body based on bodyType and subType (star colors by spectral class, planet colors by planet class). */
+import { planetClassToDisplay, starTypeToDisplay } from '@shared/normalization';
+
 interface BodyIconProps {
   bodyType: string;
   subType: string;
@@ -29,7 +31,7 @@ const PLANET_COLORS: Record<string, string> = {
   'High Metal Content World': '#8b8b8b',
   'Metal Rich Body': '#cd853f',
   'Rocky Body': '#a0826d',
-  'Rocky ice body': '#b8c8d8',
+  'Rocky Ice Body': '#b8c8d8',
   'Icy Body': '#e0f0ff',
   'Rocky Ice World': '#b8c8d8',
   'Class I Gas Giant': '#f4e3c1',
@@ -47,15 +49,15 @@ const PLANET_COLORS: Record<string, string> = {
 function BodyIcon({ bodyType, subType, className = '' }: BodyIconProps) {
   const getColor = (): string => {
     if (bodyType === 'Star') {
-      // Try to match star type
+      const display = starTypeToDisplay(subType);
       for (const [type, color] of Object.entries(STAR_COLORS)) {
-        if (subType.includes(type)) return color;
+        if (display.includes(type) || subType.toLowerCase().includes(type.toLowerCase())) return color;
       }
       return '#fff4ea'; // Default star color
     }
-    
-    // Planet/Moon
-    return PLANET_COLORS[subType] || '#808080';
+
+    const planetDisplay = planetClassToDisplay(subType);
+    return PLANET_COLORS[planetDisplay] || PLANET_COLORS[subType] || '#808080';
   };
 
   const color = getColor();
@@ -74,7 +76,7 @@ function BodyIcon({ bodyType, subType, className = '' }: BodyIconProps) {
         </defs>
         <circle cx="16" cy="16" r="14" fill={`url(#star-glow-${subType.replace(/\s/g, '')})`} />
         <circle cx="16" cy="16" r="10" fill={color} />
-        {subType.includes('Neutron') && (
+        {(starTypeToDisplay(subType).includes('Neutron') || subType === 'n') && (
           <>
             <ellipse cx="16" cy="16" rx="14" ry="2" fill={color} opacity="0.6" />
             <ellipse cx="16" cy="16" rx="2" ry="14" fill={color} opacity="0.6" />
@@ -94,7 +96,8 @@ function BodyIcon({ bodyType, subType, className = '' }: BodyIconProps) {
   }
 
   // Planet/Moon icon
-  const hasRings = subType.toLowerCase().includes('gas giant') || subType.toLowerCase().includes('giant');
+  const planetDisplay = planetClassToDisplay(subType);
+  const hasRings = planetDisplay.toLowerCase().includes('gas giant') || planetDisplay.toLowerCase().includes('giant');
   const isTerraformable = subType.includes('Terraformable');
 
   return (

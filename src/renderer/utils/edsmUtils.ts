@@ -1,5 +1,6 @@
 /** Converts EDSM API body shape to app CelestialBody (bodyType from parents, parentId, mass from earthMasses/solarMasses, scan values 0). */
 import type { CelestialBody, BodyType } from '@shared/types';
+import { normalizePlanetClass, normalizeStarType } from '@shared/normalization';
 
 export interface EDSMBodyInfo {
   bodyId: number;
@@ -79,7 +80,12 @@ export function convertEDSMBodyToCelestialBody(edsmBody: EDSMBodyInfo): Celestia
     bodyId: edsmBody.bodyId,
     name: edsmBody.name,
     bodyType,
-    subType: (edsmBody.subType != null && String(edsmBody.subType)) ? String(edsmBody.subType) : '',
+    subType:
+      edsmBody.subType != null && String(edsmBody.subType)
+        ? bodyType === 'Star'
+          ? normalizeStarType(edsmBody.subType)
+          : normalizePlanetClass(edsmBody.subType)
+        : '',
     distanceLS: Number(edsmBody.distanceToArrival) || 0,
     mass,
     radius: edsmBody.radius || edsmBody.solarRadius || null,
@@ -91,8 +97,10 @@ export function convertEDSMBodyToCelestialBody(edsmBody: EDSMBodyInfo): Celestia
     terraformable: edsmBody.terraformingState === 'Terraformable' || edsmBody.terraformingState === 'Candidate for terraforming',
     wasDiscovered: true,
     wasMapped: true,
+    wasFootfalled: true,
     discoveredByMe: false,
     mappedByMe: false,
+    footfalledByMe: false,
     scanType: 'Detailed',
     scanValue: 0,
     bioSignals: 0,

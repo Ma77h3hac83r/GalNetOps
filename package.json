@@ -1,6 +1,6 @@
 {
   "name": "GalNetOps",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Elite Dangerous Exploration Companion",
   "main": "dist/main/index.js",
   "author": "Ma77h3hac83r",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.13.18",
+    "cheerio": "^1.0.0",
     "better-sqlite3": "^11.7.0",
     "chokidar": "^4.0.3",
     "electron-store": "^8.2.0",

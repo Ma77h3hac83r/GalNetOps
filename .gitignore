@@ -56,8 +56,12 @@ coverage/
 resources/*/*.txt
 resources/*.psd
 logs/
+docs/
 documentation/
 scripts/
+
+# Diagnostic files
+backfill-diag*.txt
 
 # Markdown files
 TODO.md

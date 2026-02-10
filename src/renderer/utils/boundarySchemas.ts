@@ -54,8 +54,10 @@ export const celestialBodySchema = z.object({
   terraformable: z.boolean(),
   wasDiscovered: z.boolean(),
   wasMapped: z.boolean(),
+  wasFootfalled: z.boolean(),
   discoveredByMe: z.boolean(),
   mappedByMe: z.boolean(),
+  footfalledByMe: z.boolean(),
   scanType: scanStatusSchema,
   scanValue: z.number(),
   bioSignals: z.number(),
@@ -127,6 +129,26 @@ export function parseBoolean(value: unknown): boolean | undefined {
 export function parseNumber(value: unknown): number | undefined {
   const result = z.number().safeParse(value);
   return result.success ? result.data : undefined;
+}
+
+const planetHighlightRowSchema = z.object({
+  track: z.boolean().optional(),
+  atmosphere: z.boolean().nullable().optional(),
+  landable: z.boolean().nullable().optional(),
+  terraformable: z.boolean().nullable().optional(),
+  geological: z.boolean().nullable().optional(),
+  biological: z.boolean().nullable().optional(),
+});
+
+const planetHighlightCriteriaSchema = z.record(z.string(), planetHighlightRowSchema);
+
+/** Parse planet highlight criteria from settings IPC; returns default if invalid. */
+export function parsePlanetHighlightCriteria(
+  value: unknown
+): Record<string, Record<string, boolean | null | undefined>> {
+  const result = planetHighlightCriteriaSchema.safeParse(value);
+  if (result.success) return result.data;
+  return {};
 }
 
 // --- Statistics ---

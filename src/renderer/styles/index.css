@@ -36,8 +36,16 @@
   --color-elite-text-muted: #996633;
 }
 
-/* Custom scrollbar for dark mode */
+/* Custom scrollbar for dark mode; scrollbar-hide for map viewport */
 @layer utilities {
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
   }
@@ -235,10 +243,23 @@
     color: var(--color-elite-text-muted) !important;
   }
 
-  /* Elite accent colors for interactive elements */
+  /* Elite accent colors – all accent shades become orange (no blue) */
+  .elite .text-accent-300,
+  .elite .text-accent-400,
   .elite .text-accent-600,
-  .elite .text-accent-500 {
+  .elite .text-accent-500,
+  .elite .text-accent-700 {
     color: var(--color-elite-accent) !important;
+  }
+
+  .elite .bg-accent-50,
+  .elite .bg-accent-100 {
+    background-color: rgb(124 45 18 / 0.25) !important;
+  }
+
+  .elite .bg-accent-300,
+  .elite .bg-accent-700 {
+    background-color: var(--color-elite-accent-dim) !important;
   }
 
   .elite .bg-accent-600,
@@ -246,12 +267,117 @@
     background-color: var(--color-elite-accent) !important;
   }
 
+  .elite .bg-accent-900\/20,
+  .elite .bg-accent-900\/30,
+  .elite .bg-accent-900\/40 {
+    background-color: rgb(124 45 18 / 0.35) !important;
+  }
+
   .elite .border-accent-500 {
     border-color: var(--color-elite-accent) !important;
   }
 
-  .elite .ring-accent-500 {
+  .elite .ring-accent-300,
+  .elite .ring-accent-500,
+  .elite .ring-accent-800 {
     --tw-ring-color: var(--color-elite-accent) !important;
+  }
+
+  .elite .focus\:ring-accent-300:focus,
+  .elite .focus\:ring-accent-500:focus,
+  .elite .focus\:ring-accent-800:focus,
+  .elite .peer-focus\:ring-accent-300,
+  .elite .peer-focus\:ring-accent-800 {
+    --tw-ring-color: var(--color-elite-accent) !important;
+  }
+
+  .elite *:focus-visible {
+    --tw-ring-color: var(--color-elite-accent) !important;
+  }
+
+  .elite .focus\:border-accent-500:focus {
+    border-color: var(--color-elite-accent) !important;
+  }
+
+  /* Statistics / charts: blue gradients and icons → orange in ED theme */
+  .elite .from-blue-100,
+  .elite .from-blue-400,
+  .elite .from-blue-500,
+  .elite .dark\:from-blue-900\/30 {
+    --tw-gradient-from: var(--color-elite-accent);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+
+  .elite .to-green-100,
+  .elite .to-green-500,
+  .elite .to-blue-600,
+  .elite .dark\:to-green-900\/30 {
+    --tw-gradient-to: var(--color-elite-accent-bright);
+  }
+
+  .elite .bg-blue-500,
+  .elite .dark\:bg-blue-400 {
+    background-color: var(--color-elite-accent) !important;
+  }
+
+  /* Elite: replace all blue with orange/neutral (no blues in ED theme) */
+  .elite .bg-blue-50,
+  .elite .bg-blue-100,
+  .elite .bg-blue-200 {
+    background-color: rgb(124 45 18 / 0.2) !important;
+  }
+
+  .elite .bg-blue-600,
+  .elite .bg-blue-800 {
+    background-color: rgb(124 45 18 / 0.5) !important;
+  }
+
+  .elite .bg-blue-900\/20,
+  .elite .bg-blue-900\/30 {
+    background-color: rgb(124 45 18 / 0.25) !important;
+  }
+
+  .elite .text-blue-400,
+  .elite .text-blue-500,
+  .elite .text-blue-600,
+  .elite .text-blue-700,
+  .elite .text-blue-800,
+  .elite .text-blue-300 {
+    color: var(--color-elite-accent) !important;
+  }
+
+  .elite .border-blue-200,
+  .elite .border-blue-300,
+  .elite .border-blue-700,
+  .elite .border-blue-800 {
+    border-color: var(--color-elite-accent-dim) !important;
+  }
+
+  .elite .hover\:bg-blue-100:hover,
+  .elite .hover\:bg-blue-900\/40:hover {
+    background-color: rgb(124 45 18 / 0.3) !important;
+  }
+
+  /* Elite: indigo/sky used in modals etc. → orange */
+  .elite .text-indigo-600,
+  .elite .text-indigo-400 {
+    color: var(--color-elite-accent) !important;
+  }
+
+  .elite .text-sky-600,
+  .elite .text-sky-400 {
+    color: var(--color-elite-accent) !important;
+  }
+
+  .elite .bg-indigo-100,
+  .elite .bg-indigo-900\/30 {
+    background-color: rgb(124 45 18 / 0.25) !important;
+  }
+
+  /* Elite: hover states that use slate (nav) stay dark, active uses orange */
+  .elite .hover\:bg-slate-100:hover,
+  .elite .hover\:bg-slate-800:hover {
+    background-color: rgb(20 20 20) !important;
   }
 
   /* Elite theme link colors */

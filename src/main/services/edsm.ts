@@ -191,11 +191,11 @@ export class EDSMService {
           logError('EDSM', 'API error (non-retryable)');
           return null;
         }
-      } catch (error) {
-        lastError = error as Error;
+      } catch (error: unknown) {
+        lastError = error instanceof Error ? error : new Error(String(error));
         this.lastError = `EDSM request failed: ${lastError.message}`;
         logWarn('EDSM', `Request failed (attempt ${attempt}/${MAX_RETRIES})`);
-        
+
         if (attempt < MAX_RETRIES) {
           const delay = RETRY_DELAY_MS * attempt;
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -308,8 +308,8 @@ export class EDSMService {
 
       this.setCache(cacheKey, 'system', data);
       return data as EDSMSystemInfo;
-    } catch (error) {
-      this.lastError = `EDSM request failed: ${(error as Error).message}`;
+    } catch (error: unknown) {
+      this.lastError = `EDSM request failed: ${error instanceof Error ? error.message : String(error)}`;
       logError('EDSM', 'Request failed', error);
       return null;
     }
@@ -338,8 +338,8 @@ export class EDSMService {
 
       this.setCache(cacheKey, 'bodies', data);
       return data as EDSMBodiesResponse;
-    } catch (error) {
-      this.lastError = `EDSM request failed: ${(error as Error).message}`;
+    } catch (error: unknown) {
+      this.lastError = `EDSM request failed: ${error instanceof Error ? error.message : String(error)}`;
       logError('EDSM', 'Request failed', error);
       return null;
     }
@@ -368,8 +368,8 @@ export class EDSMService {
 
       this.setCache(cacheKey, 'value', data);
       return data as EDSMValueResponse;
-    } catch (error) {
-      this.lastError = `EDSM request failed: ${(error as Error).message}`;
+    } catch (error: unknown) {
+      this.lastError = `EDSM request failed: ${error instanceof Error ? error.message : String(error)}`;
       logError('EDSM', 'Request failed', error);
       return null;
     }
@@ -426,8 +426,8 @@ export class EDSMService {
 
       // Limit results and return
       return (data as EDSMSearchResult[]).slice(0, limit);
-    } catch (error) {
-      this.lastError = `EDSM search failed: ${(error as Error).message}`;
+    } catch (error: unknown) {
+      this.lastError = `EDSM search failed: ${error instanceof Error ? error.message : String(error)}`;
       logError('EDSM', 'Search failed', error);
       return [];
     }

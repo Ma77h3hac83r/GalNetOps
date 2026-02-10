@@ -21,6 +21,12 @@ const electronAPI = {
   openExternal: (url: string) =>
     ipcRenderer.invoke('app:open-external', url),
 
+  onUpdateAvailable: (callback: (data: { version: string; url: string }) => void) => {
+    const handler = (_event: IpcRendererEvent, data: { version: string; url: string }) => callback(data);
+    ipcRenderer.on('app:update-available', handler);
+    return () => ipcRenderer.removeListener('app:update-available', handler);
+  },
+
   // Settings
   getSettings: (key: string) => ipcRenderer.invoke('settings:get', key),
   setSettings: (key: string, value: unknown) => 
@@ -270,6 +276,25 @@ const electronAPI = {
   getGecPoiList: () =>
     ipcRenderer.invoke('edastro:get-poi-list') as Promise<Array<{ name: string; galMapSearch: string }>>,
 
+  // EDAstro Galactic Records (scraped weekly; used for record comparison)
+  getGalacticRecordsStatus: () =>
+    ipcRenderer.invoke('edastro:get-galactic-records-status') as Promise<{
+      isChecking: boolean;
+      lastScrapedAt: string | null;
+      recordCount: number;
+      error?: string;
+    }>,
+  onGalacticRecordsCheckStarted: (callback: () => void) => {
+    const handler = () => callback();
+    ipcRenderer.on('edastro:records-check-started', handler);
+    return () => ipcRenderer.removeListener('edastro:records-check-started', handler);
+  },
+  onGalacticRecordsCheckFinished: (callback: (payload: { success: boolean; error?: string }) => void) => {
+    const handler = (_event: IpcRendererEvent, payload: { success: boolean; error?: string }) => callback(payload);
+    ipcRenderer.on('edastro:records-check-finished', handler);
+    return () => ipcRenderer.removeListener('edastro:records-check-finished', handler);
+  },
+
   // Event listeners
   onSystemChanged: (callback: (system: unknown) => void) => {
     const handler = (_event: IpcRendererEvent, system: unknown) => callback(system);
@@ -380,6 +405,66 @@ const electronAPI = {
     const handler = (_event: IpcRendererEvent, data: { commander: string; gameMode: string; ship: string; isOdyssey: boolean; timestamp: string }) => callback(data);
     ipcRenderer.on('journal:game-started', handler);
     return () => ipcRenderer.removeListener('journal:game-started', handler);
+  },
+
+  // Commander info
+  getCommanderInfo: () =>
+    ipcRenderer.invoke('journal:get-commander-info') as Promise<{
+      name: string | null;
+      credits: number;
+      loan: number;
+      ship: string | null;
+      shipName: string | null;
+      shipIdent: string | null;
+      ranks: {
+        combat: number; trade: number; explore: number;
+        soldier: number; exobiologist: number;
+        empire: number; federation: number; cqc: number;
+      } | null;
+      progress: {
+        combat: number; trade: number; explore: number;
+        soldier: number; exobiologist: number;
+        empire: number; federation: number; cqc: number;
+      } | null;
+      reputation: {
+        empire: number; federation: number;
+        alliance: number; independent: number;
+      } | null;
+      powerplay: {
+        power: string; rank: number;
+        merits: number; timePledged: number;
+      } | null;
+    }>,
+
+  onCommanderUpdated: (callback: (data: {
+    name: string | null;
+    credits: number;
+    loan: number;
+    ship: string | null;
+    shipName: string | null;
+    shipIdent: string | null;
+    ranks: {
+      combat: number; trade: number; explore: number;
+      soldier: number; exobiologist: number;
+      empire: number; federation: number; cqc: number;
+    } | null;
+    progress: {
+      combat: number; trade: number; explore: number;
+      soldier: number; exobiologist: number;
+      empire: number; federation: number; cqc: number;
+    } | null;
+    reputation: {
+      empire: number; federation: number;
+      alliance: number; independent: number;
+    } | null;
+    powerplay: {
+      power: string; rank: number;
+      merits: number; timePledged: number;
+    } | null;
+  }) => void) => {
+    const handler = (_event: IpcRendererEvent, data: Parameters<typeof callback>[0]) => callback(data);
+    ipcRenderer.on('journal:commander-updated', handler);
+    return () => ipcRenderer.removeListener('journal:commander-updated', handler);
   },
 
   onGameStopped: (callback: (data: { timestamp: string }) => void) => {
@@ -494,6 +579,18 @@ const electronAPI = {
     }) => callback(data);
     ipcRenderer.on('journal:liftoff', handler);
     return () => ipcRenderer.removeListener('journal:liftoff', handler);
+  },
+
+  onBodyFootfalled: (callback: (data: {
+    bodyId: number;
+    systemAddress: number;
+  }) => void) => {
+    const handler = (_event: IpcRendererEvent, data: {
+      bodyId: number;
+      systemAddress: number;
+    }) => callback(data);
+    ipcRenderer.on('journal:body-footfalled', handler);
+    return () => ipcRenderer.removeListener('journal:body-footfalled', handler);
   },
 };
 

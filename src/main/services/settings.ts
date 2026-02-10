@@ -27,20 +27,26 @@ interface StoreSchema {
   } | null;
   isMaximized: boolean;
   hasBackfilled: boolean;
-  /** Min CR to highlight body name line as high value (gold, $$$). Default 500k for FSS+DSS high-value. */
-  bodyScanHighValue: number;
-  /** Min CR to highlight body name line as medium value (orange, $). Default 100k. */
-  bodyScanMediumValue: number;
-  /** Min CR to highlight biological line as high value (gold). Default 15M. */
-  bioHighValue: number;
-  /** Min CR to highlight biological line as medium value (orange). Default 7.5M. */
-  bioMediumValue: number;
   /** Default icon zoom index (0–5) for Explorer system map. 2 = 100%. */
   defaultIconZoomIndex: number;
   /** Default text zoom index (0–5) for Explorer system map. 2 = 100%. */
   defaultTextZoomIndex: number;
   /** When true, EDSM data shows only body count without revealing body types. */
   edsmSpoilerFree: boolean;
+  /** Min biological signals to highlight bio count (rounded rectangle, bio color, white text). Default 2. */
+  bioSignalsHighlightThreshold: number;
+  /** Planet Highlight: per-type criteria. Key = planet type canonical, value = track + characteristic overrides. */
+  planetHighlightCriteria: Record<
+    string,
+    {
+      track?: boolean;
+      atmosphere?: boolean | null;
+      landable?: boolean | null;
+      terraformable?: boolean | null;
+      geological?: boolean | null;
+      biological?: boolean | null;
+    }
+  >;
 }
 
 const defaults: StoreSchema = {
@@ -50,13 +56,11 @@ const defaults: StoreSchema = {
   windowBounds: null,
   isMaximized: false,
   hasBackfilled: false,
-  bodyScanHighValue: 500_000,
-  bodyScanMediumValue: 100_000,
-  bioHighValue: 15_000_000,
-  bioMediumValue: 7_500_000,
   defaultIconZoomIndex: 2,
   defaultTextZoomIndex: 2,
   edsmSpoilerFree: false,
+  bioSignalsHighlightThreshold: 2,
+  planetHighlightCriteria: {},
 };
 
 class SettingsService {
@@ -229,7 +233,7 @@ class SettingsService {
         result.errors.push('Path is not a directory');
         return result;
       }
-    } catch (err) {
+    } catch (err: unknown) {
       result.errors.push('Cannot access folder');
       return result;
     }
@@ -238,7 +242,7 @@ class SettingsService {
     try {
       fs.accessSync(normalizedPath, fs.constants.R_OK);
       result.isReadable = true;
-    } catch (err) {
+    } catch (err: unknown) {
       result.errors.push('Folder is not readable. Check permissions.');
       return result;
     }
@@ -307,7 +311,7 @@ class SettingsService {
               size: fileStat.size,
               modified: fileStat.mtime.toISOString(),
             });
-          } catch {
+          } catch (e: unknown) {
             // Skip files we can't stat
           }
         }
@@ -320,7 +324,7 @@ class SettingsService {
         result.eliteInstalled = true;
       }
 
-    } catch (err) {
+    } catch (err: unknown) {
       result.errors.push('Error reading folder contents');
       return result;
     }
@@ -427,7 +431,7 @@ class SettingsService {
           const content = fs.readFileSync(vdfPath, 'utf-8');
           const parsedPaths = this.parseVdfLibraryPaths(content);
           libraryPaths.push(...parsedPaths);
-        } catch (err) {
+        } catch (err: unknown) {
           logError('Settings', 'Failed to parse Steam libraryfolders.vdf', err);
         }
         break; // Found Steam, no need to check other paths
@@ -506,12 +510,12 @@ class SettingsService {
                    manifest.DisplayName.includes('Elite: Dangerous'))) {
                 return true;
               }
-            } catch {
+            } catch (e: unknown) {
               // Skip invalid JSON files
             }
           }
         }
-      } catch (err) {
+      } catch (err: unknown) {
         logError('Settings', 'Failed to check Epic manifests', err);
       }
     }
@@ -527,4 +531,4 @@ class SettingsService {
   }
 }
 
-export default SettingsService;
+export { SettingsService };

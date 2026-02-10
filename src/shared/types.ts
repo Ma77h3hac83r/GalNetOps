@@ -154,6 +154,20 @@ export interface LiftoffEvent extends JournalEvent {
   OnPlanet?: boolean;
 }
 
+export interface DisembarkEvent extends JournalEvent {
+  event: 'Disembark';
+  SRV: boolean;
+  Taxi: boolean;
+  Multicrew: boolean;
+  ID: number;
+  StarSystem: string;
+  SystemAddress: number;
+  Body: string;
+  BodyID: number;
+  OnStation: boolean;
+  OnPlanet: boolean;
+}
+
 // Scan events: FSS/DSS scans, SAA, body signals; primary source for body data and scan values.
 // Scan Events
 export interface ScanEvent extends JournalEvent {
@@ -210,6 +224,7 @@ export interface ScanEvent extends JournalEvent {
   // Discovery status
   WasDiscovered: boolean;
   WasMapped: boolean;
+  WasFootfalled?: boolean;
   
   // Parent bodies
   Parents?: Array<{ [key: string]: number }>;
@@ -286,6 +301,59 @@ export interface CodexEntryEvent extends JournalEvent {
   VoucherAmount?: number;
 }
 
+// Commander status events: ranks, progress, reputation (fired after LoadGame at session start).
+export interface RankEvent extends JournalEvent {
+  event: 'Rank';
+  Combat: number;
+  Trade: number;
+  Explore: number;
+  Soldier: number;
+  Exobiologist: number;
+  Empire: number;
+  Federation: number;
+  CQC: number;
+}
+
+export interface ProgressEvent extends JournalEvent {
+  event: 'Progress';
+  Combat: number;
+  Trade: number;
+  Explore: number;
+  Soldier: number;
+  Exobiologist: number;
+  Empire: number;
+  Federation: number;
+  CQC: number;
+}
+
+export interface ReputationEvent extends JournalEvent {
+  event: 'Reputation';
+  Empire: number;
+  Federation: number;
+  Alliance: number;
+  Independent: number;
+}
+
+export interface PowerplayEvent extends JournalEvent {
+  event: 'Powerplay';
+  Power: string;
+  Rank: number;
+  Merits: number;
+  TimePledged: number;
+}
+
+export interface PromotionEvent extends JournalEvent {
+  event: 'Promotion';
+  Combat?: number;
+  Trade?: number;
+  Explore?: number;
+  Soldier?: number;
+  Exobiologist?: number;
+  Empire?: number;
+  Federation?: number;
+  CQC?: number;
+}
+
 // Union of all journal event types we parse and handle (used for type-safe event dispatch).
 // Union type for all journal events we care about
 export type EliteJournalEvent =
@@ -302,17 +370,65 @@ export type EliteJournalEvent =
   | NavRouteClearEvent
   | TouchdownEvent
   | LiftoffEvent
+  | DisembarkEvent
   | ScanEvent
   | SAAScanCompleteEvent
   | FSSBodySignalsEvent
   | SAASignalsFoundEvent
   | ScanOrganicEvent
-  | CodexEntryEvent;
+  | CodexEntryEvent
+  | RankEvent
+  | ProgressEvent
+  | ReputationEvent
+  | PowerplayEvent
+  | PromotionEvent;
 
 // ============================================
 // Application Data Types
 // ============================================
 // Domain types for systems, bodies, routes, codex, etc.; used by DB, IPC, and renderer.
+
+/** Commander status aggregated from LoadGame, Rank, Progress, Reputation, Powerplay events. */
+export interface CommanderInfo {
+  name: string | null;
+  credits: number;
+  loan: number;
+  ship: string | null;
+  shipName: string | null;
+  shipIdent: string | null;
+  ranks: {
+    combat: number;
+    trade: number;
+    explore: number;
+    soldier: number;
+    exobiologist: number;
+    empire: number;
+    federation: number;
+    cqc: number;
+  } | null;
+  progress: {
+    combat: number;
+    trade: number;
+    explore: number;
+    soldier: number;
+    exobiologist: number;
+    empire: number;
+    federation: number;
+    cqc: number;
+  } | null;
+  reputation: {
+    empire: number;
+    federation: number;
+    alliance: number;
+    independent: number;
+  } | null;
+  powerplay: {
+    power: string;
+    rank: number;
+    merits: number;
+    timePledged: number;
+  } | null;
+}
 
 export interface System {
   id: number;
@@ -357,8 +473,10 @@ export interface CelestialBody {
   terraformable: boolean;
   wasDiscovered: boolean;
   wasMapped: boolean;
+  wasFootfalled: boolean;
   discoveredByMe: boolean;
   mappedByMe: boolean;
+  footfalledByMe: boolean;
   scanType: ScanStatus;
   scanValue: number;
   bioSignals: number;

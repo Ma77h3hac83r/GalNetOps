@@ -59,11 +59,11 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Aleoida',
     species: [
-      { species: 'Aleoida Arcus', genus: 'Aleoida', value: 7_252_500, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '175K - 180K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
-      { species: 'Aleoida Coronamus', genus: 'Aleoida', value: 6_284_600, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
-      { species: 'Aleoida Gravis', genus: 'Aleoida', value: 12_934_900, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
-      { species: 'Aleoida Laminiae', genus: 'Aleoida', value: 3_385_200, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
-      { species: 'Aleoida Spica', genus: 'Aleoida', value: 3_385_200, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
+      { species: 'Aleoida Arcus', genus: 'Aleoida', value: 7_252_500, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '175K - 180K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
+      { species: 'Aleoida Coronamus', genus: 'Aleoida', value: 6_284_600, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
+      { species: 'Aleoida Gravis', genus: 'Aleoida', value: 12_934_900, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
+      { species: 'Aleoida Laminiae', genus: 'Aleoida', value: 3_385_200, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
+      { species: 'Aleoida Spica', genus: 'Aleoida', value: 3_385_200, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Yellow, A: Green, F: Teal, G: Lime, K: Turquoise, M: Emerald, L: Lime, T: Sage, TTS: Mauve, Y: Teal, W: Grey, D: Indigo, N: Ocher') },
     ],
   },
   // AMPHORA
@@ -131,30 +131,30 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Cactoida',
     species: [
-      { species: 'Cactoida Cortexum', genus: 'Cactoida', value: 3_667_600, minDistance: 300, atmosphere: 'Carbon Dioxide', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Cactoida Lapis', genus: 'Cactoida', value: 2_483_600, minDistance: 300, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Cactoida Peperatis', genus: 'Cactoida', value: 2_483_600, minDistance: 300, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Cactoida Pullulanta', genus: 'Cactoida', value: 3_667_600, minDistance: 300, atmosphere: 'Carbon Dioxide', temp: '180K - 195K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Cactoida Vermis', genus: 'Cactoida', value: 16_202_800, minDistance: 300, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Cactoida Cortexum', genus: 'Cactoida', value: 3_667_600, minDistance: 300, atmosphere: 'Carbon Dioxide', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Cactoida Lapis', genus: 'Cactoida', value: 2_483_600, minDistance: 300, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Cactoida Peperatis', genus: 'Cactoida', value: 2_483_600, minDistance: 300, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Cactoida Pullulanta', genus: 'Cactoida', value: 3_667_600, minDistance: 300, atmosphere: 'Carbon Dioxide', temp: '180K - 195K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Cactoida Vermis', genus: 'Cactoida', value: 16_202_800, minDistance: 300, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Grey, A: Green, F: Yellow, G: Teal, K: Turquoise, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
     ],
   },
   // CLYPEUS
   {
     genus: 'Clypeus',
     species: [
-      { species: 'Clypeus Lacrimam', genus: 'Clypeus', value: 8_418_000, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
-      { species: 'Clypeus Margaritus', genus: 'Clypeus', value: 11_873_200, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
-      { species: 'Clypeus Speculumi', genus: 'Clypeus', value: 16_202_800, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', bodyDistance: '> 2,500 Ls', gravity: '0.27', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
+      { species: 'Clypeus Lacrimam', genus: 'Clypeus', value: 8_418_000, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
+      { species: 'Clypeus Margaritus', genus: 'Clypeus', value: 11_873_200, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
+      { species: 'Clypeus Speculumi', genus: 'Clypeus', value: 16_202_800, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '> 190K', planetType: 'Rocky Body, High Metal Content Body', bodyDistance: '> 2,500 Ls', gravity: '0.28', starColors: parseStarColors('B: Maroon, A: Orange, F: Mauve, G: Amethyst, K: Grey, M: Turquoise, L: Teal, Y: Green, D: Lime, N: Yellow') },
     ],
   },
   // CONCHA
   {
     genus: 'Concha',
     species: [
-      { species: 'Concha Aureolas', genus: 'Concha', value: 7_774_700, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', gravity: '0.27', starColors: parseStarColors('B: Indigo, A: Teal, F: Grey, G: Turquoise, K: Red, L: Orange, Y: Yellow, N: Emerald') },
-      { species: 'Concha Biconcavis', genus: 'Concha', value: 16_777_215, minDistance: 150, atmosphere: 'Nitrogen', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Peach), Polonium (Red), Ruthenium (Orange), Tellurium (Yellow)') },
-      { species: 'Concha Labiata', genus: 'Concha', value: 2_352_400, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '< 190K', gravity: '0.27', starColors: parseStarColors('B: Indigo, A: Teal, F: Grey, G: Turquoise, K: Red, L: Orange, Y: Yellow, N: Emerald') },
-      { species: 'Concha Renibus', genus: 'Concha', value: 4_572_400, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K', gravity: '0.27', materialColors: parseMaterialColors('Grade 3: Cadmium (Red), Mercury (Mulberry), Molybdenum (Peach), Niobium (Blue), Tungsten (White), Tin (Aquamarine)') },
+      { species: 'Concha Aureolas', genus: 'Concha', value: 7_774_700, minDistance: 150, atmosphere: 'Ammonia', temp: 'Any', gravity: '0.28', starColors: parseStarColors('B: Indigo, A: Teal, F: Grey, G: Turquoise, K: Red, L: Orange, Y: Yellow, N: Emerald') },
+      { species: 'Concha Biconcavis', genus: 'Concha', value: 16_777_215, minDistance: 150, atmosphere: 'Nitrogen', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Peach), Polonium (Red), Ruthenium (Orange), Tellurium (Yellow)') },
+      { species: 'Concha Labiata', genus: 'Concha', value: 2_352_400, minDistance: 150, atmosphere: 'Carbon Dioxide', temp: '< 190K', gravity: '0.28', starColors: parseStarColors('B: Indigo, A: Teal, F: Grey, G: Turquoise, K: Red, L: Orange, Y: Yellow, N: Emerald') },
+      { species: 'Concha Renibus', genus: 'Concha', value: 4_572_400, minDistance: 150, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K', gravity: '0.28', materialColors: parseMaterialColors('Grade 3: Cadmium (Red), Mercury (Mulberry), Molybdenum (Peach), Niobium (Blue), Tungsten (White), Tin (Aquamarine)') },
     ],
   },
   // CRYSTALLINE SHARD
@@ -168,39 +168,39 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Electricae',
     species: [
-      { species: 'Electricae Pluma', genus: 'Electricae', value: 6_284_600, minDistance: 1000, atmosphere: 'Helium, Neon, Argon', planetType: 'Icy Body', gravity: '0.27', starClass: 'A, N, D', materialColors: parseMaterialColors('Grade 4: Antimony (Cobalt), Polonium (Cyan), Ruthenium (Blue), Technetium (Magenta), Tellurium (Red), Yttrium (Mulberry)') },
-      { species: 'Electricae Radialem', genus: 'Electricae', value: 6_284_600, minDistance: 1000, atmosphere: 'Helium, Neon, Argon, Nitrogen', planetType: 'Icy Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Cyan), Polonium (Cobalt), Ruthenium (Blue), Technetium (Aquamarine), Tellurium (Magenta), Yttrium (Green)') },
+      { species: 'Electricae Pluma', genus: 'Electricae', value: 6_284_600, minDistance: 1000, atmosphere: 'Helium, Neon, Argon', planetType: 'Icy Body', gravity: '0.28', starClass: 'A, N, D', materialColors: parseMaterialColors('Grade 4: Antimony (Cobalt), Polonium (Cyan), Ruthenium (Blue), Technetium (Magenta), Tellurium (Red), Yttrium (Mulberry)') },
+      { species: 'Electricae Radialem', genus: 'Electricae', value: 6_284_600, minDistance: 1000, atmosphere: 'Helium, Neon, Argon, Nitrogen', planetType: 'Icy Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Cyan), Polonium (Cobalt), Ruthenium (Blue), Technetium (Aquamarine), Tellurium (Magenta), Yttrium (Green)') },
     ],
   },
   // FUNGOIDA
   {
     genus: 'Fungoida',
     species: [
-      { species: 'Fungoida Bullarum', genus: 'Fungoida', value: 3_703_200, minDistance: 300, atmosphere: 'Argon', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Red), Polonium (Mulberry), Ruthenium (Magenta), Technetium (Peach), Tellurium (Gold), Yttrium (Orange)') },
-      { species: 'Fungoida Gelata', genus: 'Fungoida', value: 2_680_300, minDistance: 300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Cadmium (Cyan), Mercury (Lime), Molybdenum (Mulberry), Niobium (Green), Tungsten (Orange), Tin (Red)') },
-      { species: 'Fungoida Setisis', genus: 'Fungoida', value: 1_670_100, minDistance: 300, atmosphere: 'Ammonia, Methane', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Peach), Polonium (White), Ruthenium (Gold), Technetium (Lime), Tellurium (Yellow), Yttrium (Orange)') },
-      { species: 'Fungoida Stabitis', genus: 'Fungoida', value: 2_680_300, minDistance: 300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Cadmium (Blue), Mercury (Green), Molybdenum (Magenta), Niobium (White), Tungsten (Peach), Tin (Orange)') },
+      { species: 'Fungoida Bullarum', genus: 'Fungoida', value: 3_703_200, minDistance: 300, atmosphere: 'Argon', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Red), Polonium (Mulberry), Ruthenium (Magenta), Technetium (Peach), Tellurium (Gold), Yttrium (Orange)') },
+      { species: 'Fungoida Gelata', genus: 'Fungoida', value: 2_680_300, minDistance: 300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Cadmium (Cyan), Mercury (Lime), Molybdenum (Mulberry), Niobium (Green), Tungsten (Orange), Tin (Red)') },
+      { species: 'Fungoida Setisis', genus: 'Fungoida', value: 1_670_100, minDistance: 300, atmosphere: 'Ammonia, Methane', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Peach), Polonium (White), Ruthenium (Gold), Technetium (Lime), Tellurium (Yellow), Yttrium (Orange)') },
+      { species: 'Fungoida Stabitis', genus: 'Fungoida', value: 2_680_300, minDistance: 300, atmosphere: 'Carbon Dioxide, Water', temp: '180K - 195K (CO2 only)', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Cadmium (Blue), Mercury (Green), Molybdenum (Magenta), Niobium (White), Tungsten (Peach), Tin (Orange)') },
     ],
   },
   // OSSEUS
   {
     genus: 'Osseus',
     species: [
-      { species: 'Osseus Cornibus', genus: 'Osseus', value: 1_483_000, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '180K - 195K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Osseus Discus', genus: 'Osseus', value: 12_934_900, minDistance: 800, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Osseus Fractus', genus: 'Osseus', value: 4_027_800, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Osseus Pellebantus', genus: 'Osseus', value: 9_739_000, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Osseus Pumice', genus: 'Osseus', value: 3_156_300, minDistance: 800, atmosphere: 'Methane, Argon, Nitrogen', temp: 'Any', planetType: 'Rocky Ice Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Osseus Spiralis', genus: 'Osseus', value: 2_404_700, minDistance: 800, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Osseus Cornibus', genus: 'Osseus', value: 1_483_000, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '180K - 195K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('A: Lime, F: Turquoise, G: Grey, K: Indigo, T: Emerald, TTS: Green') },
+      { species: 'Osseus Discus', genus: 'Osseus', value: 12_934_900, minDistance: 800, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', materialColors: parseMaterialColors('Grade 3: Cadmium (White), Mercury (Lime), Molybdenum (Peach), Niobium (Aquamarine), Tungsten (Red), Tin (Blue)') },
+      { species: 'Osseus Fractus', genus: 'Osseus', value: 4_027_800, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('A: Lime, F: Turquoise, G: Grey, K: Indigo, T: Emerald, TTS: Green') },
+      { species: 'Osseus Pellebantus', genus: 'Osseus', value: 9_739_000, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('A: Lime, F: Turquoise, G: Grey, K: Indigo, T: Emerald, TTS: Green') },
+      { species: 'Osseus Pumice', genus: 'Osseus', value: 3_156_300, minDistance: 800, atmosphere: 'Methane, Argon, Nitrogen', temp: 'Any', planetType: 'Rocky Ice Body', materialColors: parseMaterialColors('Grade 4: Antimony (White), Polonium (Peach), Ruthenium (Gold), Technetium (Lime), Tellurium (Green), Yttrium (Yellow)') },
+      { species: 'Osseus Spiralis', genus: 'Osseus', value: 2_404_700, minDistance: 800, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('A: Lime, F: Turquoise, G: Grey, K: Indigo, T: Emerald, TTS: Green') },
     ],
   },
   // RECEPTA
   {
     genus: 'Recepta',
     species: [
-      { species: 'Recepta Conditivus', genus: 'Recepta', value: 14_313_700, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
-      { species: 'Recepta Deltahedronix', genus: 'Recepta', value: 16_202_800, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
-      { species: 'Recepta Umbrux', genus: 'Recepta', value: 12_934_900, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'All Types', gravity: '0.27', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
+      { species: 'Recepta Conditivus', genus: 'Recepta', value: 14_313_700, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
+      { species: 'Recepta Deltahedronix', genus: 'Recepta', value: 16_202_800, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Rocky Body, High Metal Content Body', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
+      { species: 'Recepta Umbrux', genus: 'Recepta', value: 12_934_900, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'All Types', gravity: '0.28', materialColors: parseMaterialColors('Grade 4: Antimony (Mulberry), Polonium (Cyan), Ruthenium (Aquamarine), Technetium (Green), Tellurium (Lime), Yttrium (Cobalt)') },
     ],
   },
   // SINUOUS TUBER
@@ -221,14 +221,14 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Stratum',
     species: [
-      { species: 'Stratum Araneamus', genus: 'Stratum', value: 2_448_900, minDistance: 500, atmosphere: 'Sulfur Dioxide', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Cucumisis', genus: 'Stratum', value: 16_202_800, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Excutitus', genus: 'Stratum', value: 2_448_900, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Frigus', genus: 'Stratum', value: 2_637_500, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Laminamus', genus: 'Stratum', value: 2_788_300, minDistance: 500, atmosphere: 'Ammonia', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Limaxus', genus: 'Stratum', value: 1_362_000, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Paleas', genus: 'Stratum', value: 1_362_000, minDistance: 500, atmosphere: 'Carbon Dioxide, Sulfur Dioxide, Ammonia, Water', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
-      { species: 'Stratum Tectonicas', genus: 'Stratum', value: 19_010_800, minDistance: 500, atmosphere: 'Any', temp: '> 165K', planetType: 'High Metal Content Body', starColors: parseStarColors('O: Grey, B: Emerald, A: Lime, F: Green, G: Yellow, K: Teal/Lime, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Sage, N: Turquoise') },
+      { species: 'Stratum Araneamus', genus: 'Stratum', value: 2_448_900, minDistance: 500, atmosphere: 'Sulfur Dioxide', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Cucumisis', genus: 'Stratum', value: 16_202_800, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Excutitus', genus: 'Stratum', value: 2_448_900, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Frigus', genus: 'Stratum', value: 2_637_500, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '> 190K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Laminamus', genus: 'Stratum', value: 2_788_300, minDistance: 500, atmosphere: 'Ammonia', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Limaxus', genus: 'Stratum', value: 1_362_000, minDistance: 500, atmosphere: 'Sulfur Dioxide, Carbon Dioxide', temp: '165K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Paleas', genus: 'Stratum', value: 1_362_000, minDistance: 500, atmosphere: 'Carbon Dioxide, Sulfur Dioxide, Ammonia, Water', temp: '> 165K', planetType: 'Rocky Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
+      { species: 'Stratum Tectonicas', genus: 'Stratum', value: 19_010_800, minDistance: 500, atmosphere: 'Any', temp: '> 165K', planetType: 'High Metal Content Body', starColors: parseStarColors('F: Emerald, K: Lime, M: Green, T: Grey, TTS: Amethyst, D: Mauve') },
     ],
   },
   // THARGOID
@@ -245,23 +245,23 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Tubus',
     species: [
-      { species: 'Tubus Cavas', genus: 'Tubus', value: 11_873_200, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.15', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Tubus Compagibus', genus: 'Tubus', value: 7_774_700, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.15', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Tubus Conifer', genus: 'Tubus', value: 2_415_500, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.15', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Tubus Rosarium', genus: 'Tubus', value: 2_637_500, minDistance: 800, atmosphere: 'Ammonia', temp: '> 160K', planetType: 'Rocky Body', gravity: '0.15', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Tubus Sororibus', genus: 'Tubus', value: 5_727_600, minDistance: 800, atmosphere: 'Ammonia, Carbon Dioxide', temp: '160K - 190K', planetType: 'High Metal Content Body', gravity: '0.15', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Tubus Cavas', genus: 'Tubus', value: 11_873_200, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.16', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald/Maroon, M: Amethyst/Teal, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Tubus Compagibus', genus: 'Tubus', value: 7_774_700, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.16', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Tubus Conifer', genus: 'Tubus', value: 2_415_500, minDistance: 800, atmosphere: 'Carbon Dioxide', temp: '160K - 190K', planetType: 'Rocky Body', gravity: '0.16', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Tubus Rosarium', genus: 'Tubus', value: 2_637_500, minDistance: 800, atmosphere: 'Ammonia', temp: '> 160K', planetType: 'Rocky Body', gravity: '0.16', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Tubus Sororibus', genus: 'Tubus', value: 5_727_600, minDistance: 800, atmosphere: 'Ammonia, Carbon Dioxide', temp: '160K - 190K', planetType: 'High Metal Content Body', gravity: '0.16', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald/Maroon, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
     ],
   },
   // FONTICULUA (no ED_data doc - kept from estimator)
   {
     genus: 'Fonticulua',
     species: [
-      { species: 'Fonticulua Campestris', genus: 'Fonticulua', value: 1_000_000, minDistance: 500, atmosphere: 'Argon', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Fonticulua Digitos', genus: 'Fonticulua', value: 1_804_100, minDistance: 500, atmosphere: 'Methane', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Fonticulua Fluctus', genus: 'Fonticulua', value: 16_777_215, minDistance: 500, atmosphere: 'Oxygen', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Fonticulua Lapida', genus: 'Fonticulua', value: 3_111_000, minDistance: 500, atmosphere: 'Nitrogen', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Fonticulua Segmentatus', genus: 'Fonticulua', value: 19_010_800, minDistance: 500, atmosphere: 'Neon', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
-      { species: 'Fonticulua Upupam', genus: 'Fonticulua', value: 5_727_600, minDistance: 500, atmosphere: 'Argon-Rich', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.27', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Campestris', genus: 'Fonticulua', value: 1_000_000, minDistance: 500, atmosphere: 'Argon', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Digitos', genus: 'Fonticulua', value: 1_804_100, minDistance: 500, atmosphere: 'Methane', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Fluctus', genus: 'Fonticulua', value: 16_777_215, minDistance: 500, atmosphere: 'Oxygen', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Lapida', genus: 'Fonticulua', value: 3_111_000, minDistance: 500, atmosphere: 'Nitrogen', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Segmentatus', genus: 'Fonticulua', value: 19_010_800, minDistance: 500, atmosphere: 'Neon', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
+      { species: 'Fonticulua Upupam', genus: 'Fonticulua', value: 5_727_600, minDistance: 500, atmosphere: 'Argon-Rich', planetType: 'Icy Body, Rocky Ice Body', gravity: '0.28', starColors: parseStarColors('O: Grey, B: Lime, A: Green, F: Yellow, G: Teal, K: Emerald, M: Amethyst, L: Mauve, T: Orange, TTS: Red, Y: Ocher, W: Indigo, D: Turquoise, N: Sage') },
     ],
   },
   // FUMEROLA (no ED_data doc - kept from estimator)
@@ -278,34 +278,34 @@ const RAW_SPECIES: Array<{ genus: string; species: SpeciesData[] }> = [
   {
     genus: 'Frutexa',
     species: [
-      { species: 'Frutexa Acus', genus: 'Frutexa', value: 7_774_700, minDistance: 150, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Collum', genus: 'Frutexa', value: 1_639_800, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Fera', genus: 'Frutexa', value: 1_632_500, minDistance: 150, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Flabellum', genus: 'Frutexa', value: 1_808_900, minDistance: 150, atmosphere: 'Ammonia', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Flammasis', genus: 'Frutexa', value: 10_326_000, minDistance: 150, atmosphere: 'Ammonia', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Metallicum', genus: 'Frutexa', value: 1_632_500, minDistance: 150, atmosphere: 'Ammonia, Carbon Dioxide', planetType: 'High Metal Content Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Frutexa Sponsae', genus: 'Frutexa', value: 5_988_000, minDistance: 150, atmosphere: 'Water', planetType: 'Rocky Body', gravity: '0.27', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Acus', genus: 'Frutexa', value: 7_774_700, minDistance: 150, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Collum', genus: 'Frutexa', value: 1_639_800, minDistance: 150, atmosphere: 'Sulfur Dioxide', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Fera', genus: 'Frutexa', value: 1_632_500, minDistance: 150, atmosphere: 'Carbon Dioxide', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Flabellum', genus: 'Frutexa', value: 1_808_900, minDistance: 150, atmosphere: 'Ammonia', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Flammasis', genus: 'Frutexa', value: 10_326_000, minDistance: 150, atmosphere: 'Ammonia', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Metallicum', genus: 'Frutexa', value: 1_632_500, minDistance: 150, atmosphere: 'Ammonia, Carbon Dioxide', planetType: 'High Metal Content Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Frutexa Sponsae', genus: 'Frutexa', value: 5_988_000, minDistance: 150, atmosphere: 'Water', planetType: 'Rocky Body', gravity: '0.28', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Green, G: Lime, K: Turquoise/Indigo, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
     ],
   },
   // TUSSOCK
   {
     genus: 'Tussock',
     species: [
-      { species: 'Tussock Albata', genus: 'Tussock', value: 3_252_500, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '175K - 180K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Capillum', genus: 'Tussock', value: 7_025_800, minDistance: 200, atmosphere: 'Methane, Argon', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Caputus', genus: 'Tussock', value: 3_472_400, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Catena', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Cultro', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Divisa', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Ignis', genus: 'Tussock', value: 1_849_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '160K - 170K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Pennata', genus: 'Tussock', value: 5_853_800, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '145K - 155K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Pennatis', genus: 'Tussock', value: 1_000_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '< 195K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Propagito', genus: 'Tussock', value: 1_000_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '< 195K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Serrati', genus: 'Tussock', value: 4_447_100, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '170K - 175K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Stigmasis', genus: 'Tussock', value: 19_010_800, minDistance: 200, atmosphere: 'Sulfur Dioxide', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Triticum', genus: 'Tussock', value: 7_774_700, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Ventusa', genus: 'Tussock', value: 3_277_700, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '155K - 160K', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
-      { species: 'Tussock Virgam', genus: 'Tussock', value: 14_313_700, minDistance: 200, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('O: Turquoise, B: Grey, A: Yellow, F: Lime, G: Green, K: Teal, M: Emerald, L: Sage, T: Red, TTS: Maroon, Y: Mauve, W: Amethyst, D: Ocher, N: Indigo') },
+      { species: 'Tussock Albata', genus: 'Tussock', value: 3_252_500, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '175K - 180K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Capillum', genus: 'Tussock', value: 7_025_800, minDistance: 200, atmosphere: 'Methane, Argon', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Caputus', genus: 'Tussock', value: 3_472_400, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '180K - 190K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Catena', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Cultro', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Divisa', genus: 'Tussock', value: 1_766_600, minDistance: 200, atmosphere: 'Ammonia', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Ignis', genus: 'Tussock', value: 1_849_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '160K - 170K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Pennata', genus: 'Tussock', value: 5_853_800, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '145K - 155K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Pennatis', genus: 'Tussock', value: 1_000_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '< 195K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Propagito', genus: 'Tussock', value: 1_000_000, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '< 195K', planetType: 'Rocky Body, High Metal Content Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Serrati', genus: 'Tussock', value: 4_447_100, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '170K - 175K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Stigmasis', genus: 'Tussock', value: 19_010_800, minDistance: 200, atmosphere: 'Sulfur Dioxide', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Triticum', genus: 'Tussock', value: 7_774_700, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '190K - 195K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Ventusa', genus: 'Tussock', value: 3_277_700, minDistance: 200, atmosphere: 'Carbon Dioxide', temp: '155K - 160K', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
+      { species: 'Tussock Virgam', genus: 'Tussock', value: 14_313_700, minDistance: 200, atmosphere: 'Water', temp: 'Any', planetType: 'Rocky Body', starColors: parseStarColors('F: Yellow, G: Lime, K: Green, M: Emerald, L: Sage, T: Teal, D: Maroon') },
     ],
   },
 ];
@@ -393,8 +393,8 @@ export function buildEstimatorGenusRules(): EstimatorGenusRule[] {
     const species: EstimatorSpeciesRule[] = [];
     let genusPlanetTypes: Set<string> | null = null;
     let genusMaxGravity: number | undefined;
-    let genusAtmosphere: string | undefined;
-    let genusVolcanism: string | undefined;
+    const genusAtmospheres = new Set<string>();
+    const genusVolcanisms = new Set<string>();
     let genusStarColors: Record<string, string> | undefined;
     let genusTempMin: number | undefined;
     let genusTempMax: number | undefined;
@@ -412,22 +412,22 @@ export function buildEstimatorGenusRules(): EstimatorGenusRule[] {
         const val = parseFloat(s.gravity.replace(/[≤\s>g]/gi, ''));
         if (!isNaN(val) && (genusMaxGravity == null || val < genusMaxGravity)) genusMaxGravity = val;
       }
-      if (s.atmosphere && !genusAtmosphere) genusAtmosphere = s.atmosphere;
-      if (s.volcanism && !genusVolcanism) genusVolcanism = s.volcanism;
+      if (s.atmosphere) genusAtmospheres.add(s.atmosphere.trim());
+      if (s.volcanism) genusVolcanisms.add(s.volcanism.trim());
       if (s.starColors && !s.materialColors && !genusStarColors) genusStarColors = s.starColors;
       if (s.systemRequirement) {
         genusSystemHas = s.systemRequirement.split(',').map((x) => x.trim());
       }
-      // Extract genus tempMin from "> XK" temps
+      // Extract genus tempMin from "> XK" temps (use minimum = most permissive, so bodies matching any species pass)
       if (s.temp) {
         const gt = s.temp.match(/>\s*(\d+)\s*K/i);
         if (gt && gt[1] != null) {
           const v = parseInt(gt[1], 10);
-          if (genusTempMin == null || v > genusTempMin) genusTempMin = v;
+          if (genusTempMin == null || v < genusTempMin) genusTempMin = v;
         }
       }
 
-      const distMinLs = parseDistMinLs(s.bodyDistance);
+      const distMinLs = parseDistMinLs(s.bodyDistance) ?? (s.minDistance != null ? s.minDistance : undefined);
       species.push({
         species: s.species,
         baseValue: s.value,
@@ -442,7 +442,9 @@ export function buildEstimatorGenusRules(): EstimatorGenusRule[] {
       });
     }
 
-    // Derive genus-level
+    // Derive genus-level: only set atmosphere/volcanism when all species share the same one
+    const genusAtmosphere = genusAtmospheres.size === 1 ? [...genusAtmospheres][0]! : undefined;
+    const genusVolcanism = genusVolcanisms.size === 1 ? [...genusVolcanisms][0]! : undefined;
     const planetTypes = genusPlanetTypes && genusPlanetTypes.size > 0 ? [...genusPlanetTypes].join(', ') : undefined;
     const rule: EstimatorGenusRule = {
       genus: g.genus,

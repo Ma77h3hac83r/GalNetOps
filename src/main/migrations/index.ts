@@ -1,12 +1,13 @@
 /**
  * Database Migration System
- * 
+ *
  * Migrations are versioned SQL changes that are applied in order.
  * Each migration has a unique version number and is only run once.
  * The current schema version is stored in the settings table.
  */
 
 import type Database from 'better-sqlite3';
+import { normalizePlanetClass, normalizeStarType } from '../../shared/normalization';
 
 /**
  * Represents a database migration
@@ -291,6 +292,78 @@ const migration008: Migration = {
 };
 
 /**
+ * Migration 009: Normalize bodies.sub_type to canonical keys (planet class / star type)
+ * Ensures existing journal/EDSM casing (e.g. "Rocky body") is stored as canonical ("rocky_body").
+ */
+const migration009: Migration = {
+  version: 9,
+  description: 'Normalize bodies.sub_type to canonical planet class / star type keys',
+  up: (db) => {
+    const rows = db
+      .prepare("SELECT id, body_type, sub_type FROM bodies WHERE sub_type IS NOT NULL AND sub_type != ''")
+      .all() as Array<{ id: number; body_type: string; sub_type: string }>;
+    const updateStmt = db.prepare('UPDATE bodies SET sub_type = ? WHERE id = ?');
+    for (const row of rows) {
+      const canonical =
+        row.body_type === 'Star'
+          ? normalizeStarType(row.sub_type)
+          : normalizePlanetClass(row.sub_type);
+      if (canonical) {
+        updateStmt.run(canonical, row.id);
+      }
+    }
+  },
+};
+
+/**
+ * Migration 010: Add was_footfalled and footfalled_by_me to bodies
+ * Tracks First Footfall status from journal Scan events (WasFootfalled field)
+ */
+const migration010: Migration = {
+  version: 10,
+  description: 'Add was_footfalled and footfalled_by_me columns to bodies table',
+  up: (db) => {
+    const tableInfo = db.pragma('table_info(bodies)') as Array<{ name: string }>;
+    if (!tableInfo.some((c) => c.name === 'was_footfalled')) {
+      db.exec(`ALTER TABLE bodies ADD COLUMN was_footfalled INTEGER DEFAULT 0`);
+    }
+    if (!tableInfo.some((c) => c.name === 'footfalled_by_me')) {
+      db.exec(`ALTER TABLE bodies ADD COLUMN footfalled_by_me INTEGER DEFAULT 0`);
+    }
+  }
+};
+
+/**
+ * Migration 011: Deduplicate biologicals and add unique index
+ * The biologicals table lacked a UNIQUE constraint on (body_id, genus, species),
+ * so the ON CONFLICT upsert never fired and duplicate rows were created for
+ * each scan stage (Log/Sample/Analyse). This migration removes duplicates
+ * (keeping the row with the highest scan_progress) and adds the unique index.
+ */
+const migration011: Migration = {
+  version: 11,
+  description: 'Deduplicate biologicals rows and add unique index on (body_id, genus, species)',
+  up: (db) => {
+    // Deduplicate: keep the row with highest scan_progress for each (body_id, genus, species)
+    db.exec(`
+      DELETE FROM biologicals
+      WHERE id NOT IN (
+        SELECT id FROM (
+          SELECT id, ROW_NUMBER() OVER (
+            PARTITION BY body_id, genus, species
+            ORDER BY scan_progress DESC, scanned DESC, id DESC
+          ) AS rn
+          FROM biologicals
+        ) WHERE rn = 1
+      )
+    `);
+
+    // Add unique index to enforce uniqueness going forward
+    db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_biologicals_body_species ON biologicals(body_id, genus, species)`);
+  }
+};
+
+/**
  * All migrations in order of version
  * Add new migrations to the end of this array
  */
@@ -303,6 +376,9 @@ export const migrations: Migration[] = [
   migration006,
   migration007,
   migration008,
+  migration009,
+  migration010,
+  migration011,
 ];
 
 /**

@@ -1,18 +1,22 @@
-/** Root component: theme init, app state init from IPC, journal event subscriptions, setup wizard when no journal path, and view routing (Explorer/RouteHistory/Statistics/Codex/Settings). */
+/** Root component: theme init, app state init from IPC, journal event subscriptions, setup wizard when no journal path, and view routing (Explorer/RouteHistory/RoutePlanner/Statistics/Codex/Settings). */
 import { useEffect, useState, Suspense, lazy } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from './stores/appStore';
 import { useTheme } from './hooks/useTheme';
-import { parseJournalPath, parseBoolean, parseNumber } from './utils/boundarySchemas';
+import { parseJournalPath, parseBoolean, parseNumber, parsePlanetHighlightCriteria } from './utils/boundarySchemas';
+import { formatScannedSpecies } from '../shared/exobiologyEstimator';
 import TitleBar from './components/TitleBar';
-import SetupWizard from './components/SetupWizard';
+import { SetupWizard } from './components/SetupWizard';
 
 // Lazy-load views so loading and errors are scoped by Suspense/ErrorBoundary
 const ExplorerView = lazy(() => import('./components/ExplorerView').then((m) => ({ default: m.default })));
-const RouteHistory = lazy(() => import('./pages/RouteHistory').then((m) => ({ default: m.default })));
-const Statistics = lazy(() => import('./pages/Statistics').then((m) => ({ default: m.default })));
-const Codex = lazy(() => import('./pages/Codex').then((m) => ({ default: m.default })));
-const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.default })));
+const RouteHistory = lazy(() => import('./pages/RouteHistory').then((m) => ({ default: m.RouteHistory })));
+const RoutePlanner = lazy(() => import('./pages/RoutePlanner').then((m) => ({ default: m.RoutePlanner })));
+const Statistics = lazy(() => import('./pages/Statistics').then((m) => ({ default: m.Statistics })));
+const Codex = lazy(() => import('./pages/Codex').then((m) => ({ default: m.Codex })));
+const Settings = lazy(() =>
+  import('./pages/Settings').then((m) => ({ default: m.Settings }))
+);
 
 interface BackfillProgress {
   progress: number;
@@ -28,17 +32,17 @@ function App() {
     setCurrentSystem,
     addBody,
     updateBodyMapped,
+    updateBodyFootfalled,
     updateBodySignals,
     setJournalPath,
     setEdsmSpoilerFree,
-    setBodyScanHighValue,
-    setBodyScanMediumValue,
-    setBioHighValue,
-    setBioMediumValue,
+    setBioSignalsHighlightThreshold,
+    setPlanetHighlightCriteria,
     setDefaultIconZoomIndex,
     setDefaultTextZoomIndex,
     setLoading,
     isLoading,
+    setCommanderInfo,
   } = useAppStore(
     useShallow((s) => ({
       journalPath: s.journalPath,
@@ -46,17 +50,17 @@ function App() {
       setCurrentSystem: s.setCurrentSystem,
       addBody: s.addBody,
       updateBodyMapped: s.updateBodyMapped,
+      updateBodyFootfalled: s.updateBodyFootfalled,
       updateBodySignals: s.updateBodySignals,
       setJournalPath: s.setJournalPath,
       setEdsmSpoilerFree: s.setEdsmSpoilerFree,
-      setBodyScanHighValue: s.setBodyScanHighValue,
-      setBodyScanMediumValue: s.setBodyScanMediumValue,
-      setBioHighValue: s.setBioHighValue,
-      setBioMediumValue: s.setBioMediumValue,
+      setBioSignalsHighlightThreshold: s.setBioSignalsHighlightThreshold,
+      setPlanetHighlightCriteria: s.setPlanetHighlightCriteria,
       setDefaultIconZoomIndex: s.setDefaultIconZoomIndex,
       setDefaultTextZoomIndex: s.setDefaultTextZoomIndex,
       setLoading: s.setLoading,
       isLoading: s.isLoading,
+      setCommanderInfo: s.setCommanderInfo,
     }))
   );
   
@@ -82,8 +86,12 @@ function App() {
       volcanism: string | null;
     };
     speciesNotVerified?: string[];
+    estimatedFssSpecies?: string;
+    estimatedDssSpecies?: string;
+    confirmedSpecies?: string;
   }
   const [exobiologyMismatch, setExobiologyMismatch] = useState<ExobiologyMismatch | null>(null);
+  const [updateAvailable, setUpdateAvailable] = useState<{ version: string; url: string } | null>(null);
 
   // Initialize theme
   useTheme();
@@ -103,29 +111,29 @@ function App() {
         const edsmSpoilerFree = parseBoolean(await window.electron.getSettings('edsmSpoilerFree'));
         if (edsmSpoilerFree !== undefined) setEdsmSpoilerFree(edsmSpoilerFree);
 
-        const [bodyHigh, bodyMed, bioHigh, bioMed, defaultIconZoom, defaultTextZoom] = await Promise.all([
-          window.electron.getSettings('bodyScanHighValue'),
-          window.electron.getSettings('bodyScanMediumValue'),
-          window.electron.getSettings('bioHighValue'),
-          window.electron.getSettings('bioMediumValue'),
+        const [bioHighlight, planetHighlight, defaultIconZoom, defaultTextZoom] = await Promise.all([
+          window.electron.getSettings('bioSignalsHighlightThreshold'),
+          window.electron.getSettings('planetHighlightCriteria'),
           window.electron.getSettings('defaultIconZoomIndex'),
           window.electron.getSettings('defaultTextZoomIndex'),
         ]);
-        const vHigh = parseNumber(bodyHigh);
-        const vMed = parseNumber(bodyMed);
-        const vBioHigh = parseNumber(bioHigh);
-        const vBioMed = parseNumber(bioMed);
+        const vBioHighlight = parseNumber(bioHighlight);
+        const vPlanetHighlight = parsePlanetHighlightCriteria(planetHighlight);
         const vZoomI = parseNumber(defaultIconZoom);
         const vZoomT = parseNumber(defaultTextZoom);
-        if (vHigh !== undefined) setBodyScanHighValue(vHigh);
-        if (vMed !== undefined) setBodyScanMediumValue(vMed);
-        if (vBioHigh !== undefined) setBioHighValue(vBioHigh);
-        if (vBioMed !== undefined) setBioMediumValue(vBioMed);
+        if (vBioHighlight !== undefined && vBioHighlight >= 0) setBioSignalsHighlightThreshold(vBioHighlight);
+        setPlanetHighlightCriteria(vPlanetHighlight);
         if (vZoomI !== undefined && vZoomI >= 0 && vZoomI <= 5) setDefaultIconZoomIndex(vZoomI);
         if (vZoomT !== undefined && vZoomT >= 0 && vZoomT <= 5) setDefaultTextZoomIndex(vZoomT);
 
         const system = await window.electron.getCurrentSystem();
         setCurrentSystem(system ?? null);
+
+        // Load commander info (name, credits, ship, ranks, progress, reputation)
+        if (window.electron.getCommanderInfo) {
+          const cmdrInfo = await window.electron.getCommanderInfo();
+          if (cmdrInfo?.name) setCommanderInfo(cmdrInfo);
+        }
       } catch (err) {
         console.error('Init failed:', err);
         setLoading(false);
@@ -136,7 +144,7 @@ function App() {
       console.error('Init promise rejected:', err);
       setLoading(false);
     });
-  }, [setJournalPath, setEdsmSpoilerFree, setBodyScanHighValue, setBodyScanMediumValue, setBioHighValue, setBioMediumValue, setDefaultIconZoomIndex, setDefaultTextZoomIndex, setCurrentSystem, setLoading]);
+  }, [setJournalPath, setEdsmSpoilerFree, setBioSignalsHighlightThreshold, setPlanetHighlightCriteria, setDefaultIconZoomIndex, setDefaultTextZoomIndex, setCurrentSystem, setCommanderInfo, setLoading]);
 
   // Subscribe to journal events (system changed, body scanned/mapped, signals) and cleanup on unmount
   useEffect(() => {
@@ -159,13 +167,23 @@ function App() {
       updateBodySignals(data);
     });
 
+    const unsubFootfalled = window.electron.onBodyFootfalled((data: { bodyId: number; systemAddress: number }) => {
+      updateBodyFootfalled(data.bodyId);
+    });
+
+    const unsubCommander = window.electron.onCommanderUpdated?.((data) => {
+      if (data?.name) setCommanderInfo(data);
+    }) ?? (() => {});
+
     return () => {
       unsubSystem();
       unsubBody();
       unsubMapped();
       unsubSignals();
+      unsubFootfalled();
+      unsubCommander();
     };
-  }, []);
+  }, [setCurrentSystem, addBody, updateBodyMapped, updateBodyFootfalled, updateBodySignals, setCommanderInfo]);
 
   // Subscribe to auto-import progress
   useEffect(() => {
@@ -189,6 +207,17 @@ function App() {
       if (data && typeof data === 'object' && 'systemName' in data && 'species' in data) {
         setExobiologyMismatch(data as ExobiologyMismatch);
       }
+    });
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  // Subscribe to update-available (new version from GitHub releases)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.electron?.onUpdateAvailable) return () => {};
+    const unsub = window.electron.onUpdateAvailable((data: { version: string; url: string }) => {
+      if (data?.version && data?.url) setUpdateAvailable({ version: data.version, url: data.url });
     });
     return () => {
       unsub();
@@ -224,6 +253,8 @@ function App() {
     switch (currentView) {
       case 'route-history':
         return <RouteHistory />;
+      case 'route-planner':
+        return <RoutePlanner />;
       case 'statistics':
         return <Statistics />;
       case 'codex':
@@ -251,6 +282,34 @@ function App() {
   return (
     <div className="h-screen flex flex-col bg-surface">
       <TitleBar />
+
+      {/* New version available banner */}
+      {updateAvailable && (
+        <div className="flex items-center justify-between gap-3 px-4 py-2 bg-accent-600 dark:bg-accent-700 text-white text-sm shrink-0">
+          <span>
+            A new version <strong>{updateAvailable.version}</strong> is available.
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                window.electron?.openExternal(updateAvailable.url);
+              }}
+              className="px-3 py-1 rounded bg-white/20 hover:bg-white/30 font-medium"
+            >
+              Download
+            </button>
+            <button
+              type="button"
+              onClick={() => setUpdateAvailable(null)}
+              className="p-1 rounded hover:bg-white/20"
+              aria-label="Dismiss"
+            >
+              <span aria-hidden>×</span>
+            </button>
+          </div>
+        </div>
+      )}
       
       <main className="flex-1 flex flex-col overflow-hidden">
         <Suspense fallback={viewFallback}>
@@ -308,8 +367,7 @@ function App() {
                 Exobiology estimate mismatch: {exobiologyMismatch.systemName} {exobiologyMismatch.bodyName}
               </p>
               <p className="text-amber-100 text-xs mt-0.5">
-                Found: {exobiologyMismatch.species}
-                {exobiologyMismatch.foundVariant ? ` ${exobiologyMismatch.foundVariant}` : ''}
+                Found: {formatScannedSpecies(exobiologyMismatch.genus, exobiologyMismatch.species, exobiologyMismatch.foundVariant || null)}
                 {exobiologyMismatch.estimatedVariant && exobiologyMismatch.reason === 'variant_mismatch' && (
                   <> · Estimated: {exobiologyMismatch.estimatedVariant}</>
                 )}
@@ -336,12 +394,14 @@ function App() {
                   const notVerifiedBlock =
                     exobiologyMismatch.speciesNotVerified?.length &&
                     `\n**Species not verified** (not scanned by CMDR): ${exobiologyMismatch.speciesNotVerified.join(', ')}\n`;
+                  const speciesBlocks =
+                    `\n**Estimated FSS species:** ${exobiologyMismatch.estimatedFssSpecies ?? 'None'}\n` +
+                    `**Estimated DSS species:** ${exobiologyMismatch.estimatedDssSpecies ?? 'N/A (no DSS yet)'}\n` +
+                    `**Scanned Species:** ${exobiologyMismatch.confirmedSpecies ?? 'None'}\n`;
                   const body = encodeURIComponent(
                     `**System:** ${exobiologyMismatch.systemName}\n` +
                       `**Body:** ${exobiologyMismatch.bodyName}\n` +
-                      `**Found:** ${exobiologyMismatch.species}${exobiologyMismatch.foundVariant ? ` ${exobiologyMismatch.foundVariant}` : ''}\n` +
-                      `**Estimated:** ${exobiologyMismatch.estimatedVariant || 'N/A'}\n` +
-                      `**Reason:** ${exobiologyMismatch.reason}` +
+                      speciesBlocks +
                       (notVerifiedBlock || '') +
                       (charBlock || '') +
                       `\n\nPlease describe what you observed. This helps us improve the wiki-derived estimator data.`

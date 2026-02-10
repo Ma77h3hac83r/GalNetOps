@@ -13,7 +13,7 @@ GalNetOps reads your journal files and gives you live system visualization, accu
 5. Exobiology tracking - Species estimator based on system/body properties to help you decide if it's worth your time. Species progress, sample distances, and earnings per genus.
 6. Route planner - Input a list of system names and POIs to add in your expeditions.
 
-* This program does not upload or read any data from your Elite Dangerous account, EDSM profile, Inara profile etc. All data is read from your journal files local to your file system.
+* This program does not *upload* or *read* any data from your Elite Dangerous account, EDSM profile, Inara profile etc. All data is read from your journal files local to your file system.
 * As [EDMC](https://github.com/EDCD/EDMarketConnector/wiki) can do all the backend updating it is highly recommended you run this program alongside it.
 
 ---
@@ -23,25 +23,35 @@ GalNetOps reads your journal files and gives you live system visualization, accu
 #### **Explorer**
 Live system map with hierarchical body layout, scan status indicators, and a details panel showing orbital parameters, ring systems, biological species, and estimated values.
 
+- **NEW FEATURE** Ability to select which bodies and characteristics to highlight for high-value exploration (see Exploration Settings).
+
 ![Explorer Screenshot](public/images/readme_screenshot.png)
+| Body Details | Biological & Scan Values |
+|----|----|
+| ![Body Details Screenshot](public/images/body_details_screenshot.png) | ![Body Details Screenshot](public/images/scan_values_screenshot.png)|
 
 #### **Route History**
 Paginated jump log with filtering by date, session, or system name. Export to CSV/JSON or copy system names to clipboard.
 
-![Explorer Screenshot](public/images/route_history_screenshot.png)
+![Route History Screenshot](public/images/route_history_screenshot.png)
+
+#### **Route Planner & POI List**
+New dedicated page for route planning and POI tracking. Input a list of systems to follow as you explore. Create custom a custom POI list of your discoveries!
+
+![Route Planner POI](public/images/route_planner_poi_screenshot.png)
 
 #### **Statistics**
 Exploration metrics and trends: systems visited, first discoveries, scan values over time, body type distribution, and exobiology progress.
 
-![Explorer Screenshot](public/images/statistics_screenshot.png)
+![Statistics Screenshot](public/images/statistics_screenshot.png)
 
 #### **Codex**
 Track your discoveries across biology, geology, anomalies, Thargoid, and Guardian categories.
 
-![Explorer Screenshot](public/images/codex_screenshot.png)
+![Codex Screenshot](public/images/codex_screenshot.png)
 
 #### **Settings**
-Journal path detection, theme selection, value thresholds, EDSM integration, database management, and journal backfill.
+Journal path detection, theme selection, exploration settings, EDSM integration, database management, and journal backfill.
 
 #### **Feedback**
 A simple button that takes you directly to a new GitHub issue to submit your feedback.
@@ -51,7 +61,7 @@ A simple button that takes you directly to a new GitHub issue to submit your fee
 ### **Versioning**
 
 - This project follows [Semantic Version 2.0.0](https://semver.org/): MAJOR.MINOR.PATCH
-- Current version is **1.0.0-beta.1**.
+- Current version is **1.0.0-beta.2**.
 
 ### **Installation**
 
@@ -96,5 +106,6 @@ Contributions welcome. Please open a [issue](https://github.com/Ma77h3hac83r/Gal
 
 ### **Acknowledgments**
 
-- [EDSM](https://www.edsm.net/) for exisiting galactic data.
 - Frontier for developing [Elite Dangerous](https://www.elitedangerous.com/en-US).
+- [EDSM](https://www.edsm.net) for exisiting galactic data.
+- [EDAstro](https://edastro.com) for the Galactic Explorer Catalog (GEC) API and galactic body data.

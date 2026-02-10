@@ -1,11 +1,11 @@
 /** Zustand app store: current system, bodies, biologicals, EDSM state, settings (theme, value thresholds, zoom), UI state (view, details panel, collapsed nodes), and actions (set system, add/update body, fetch EDSM, etc.). */
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import type { System, CelestialBody, Biological } from '@shared/types';
+import type { System, CelestialBody, Biological, CommanderInfo } from '@shared/types';
 import { convertEDSMBodyToCelestialBody, type EDSMBodyInfo } from '../utils/edsmUtils';
 import { parseSystem, parseCelestialBody, parseCelestialBodyArray } from '../utils/boundarySchemas';
 
-export type AppView = 'explorer' | 'route-history' | 'statistics' | 'codex' | 'settings';
+export type AppView = 'explorer' | 'route-history' | 'route-planner' | 'statistics' | 'codex' | 'settings';
 
 // EDSM request state for tracking loading/results and cancelling stale requests
 interface EDSMState {
@@ -27,10 +27,18 @@ export interface AppStoreState {
   theme: 'light' | 'dark' | 'system' | 'elite';
   showFirstDiscoveryValues: boolean;
   edsmSpoilerFree: boolean;
-  bodyScanHighValue: number;
-  bodyScanMediumValue: number;
-  bioHighValue: number;
-  bioMediumValue: number;
+  bioSignalsHighlightThreshold: number;
+  planetHighlightCriteria: Record<
+    string,
+    {
+      track?: boolean;
+      atmosphere?: boolean | null;
+      landable?: boolean | null;
+      terraformable?: boolean | null;
+      geological?: boolean | null;
+      biological?: boolean | null;
+    }
+  >;
   defaultIconZoomIndex: number;
   defaultTextZoomIndex: number;
   isLoading: boolean;
@@ -41,6 +49,7 @@ export interface AppStoreState {
   routePlannerPanelWidth: number;
   currentView: AppView;
   collapsedNodes: Map<number, Set<number>>;
+  commanderInfo: CommanderInfo | null;
 }
 
 /** Returns fresh initial state (new Map refs each time). Use in create() and reset(). */
@@ -61,10 +70,8 @@ function getInitialState(): AppStoreState {
     theme: 'system',
     showFirstDiscoveryValues: true,
     edsmSpoilerFree: false,
-    bodyScanHighValue: 1_000_000,
-    bodyScanMediumValue: 100_000,
-    bioHighValue: 15_000_000,
-    bioMediumValue: 7_500_000,
+    bioSignalsHighlightThreshold: 2,
+    planetHighlightCriteria: {},
     defaultIconZoomIndex: 2,
     defaultTextZoomIndex: 2,
     isLoading: true,
@@ -75,6 +82,7 @@ function getInitialState(): AppStoreState {
     routePlannerPanelWidth: 320,
     currentView: 'explorer',
     collapsedNodes: new Map(),
+    commanderInfo: null,
   };
 }
 
@@ -87,6 +95,7 @@ interface AppState extends AppStoreState {
   setCurrentSystem: (system: System | null | unknown) => void;
   addBody: (body: unknown) => void;
   updateBodyMapped: (bodyId: number) => void;
+  updateBodyFootfalled: (bodyId: number) => void;
   /** Update bio/geo/human/thargoid signals for a body (e.g. after FSSBodySignals). Only applies if body is in current system. */
   updateBodySignals: (payload: {
     systemAddress: number;
@@ -102,10 +111,8 @@ interface AppState extends AppStoreState {
   setTheme: (theme: 'light' | 'dark' | 'system' | 'elite') => void;
   setShowFirstDiscoveryValues: (show: boolean) => void;
   setEdsmSpoilerFree: (enabled: boolean) => void;
-  setBodyScanHighValue: (v: number) => void;
-  setBodyScanMediumValue: (v: number) => void;
-  setBioHighValue: (v: number) => void;
-  setBioMediumValue: (v: number) => void;
+  setBioSignalsHighlightThreshold: (v: number) => void;
+  setPlanetHighlightCriteria: (v: AppStoreState['planetHighlightCriteria']) => void;
   setDefaultIconZoomIndex: (v: number) => void;
   setDefaultTextZoomIndex: (v: number) => void;
   setLoading: (loading: boolean) => void;
@@ -127,6 +134,8 @@ interface AppState extends AppStoreState {
   fetchEdsmData: (systemName: string) => Promise<void>;
   /** Clear EDSM state */
   clearEdsmState: () => void;
+  /** Set commander info from journal events (LoadGame, Rank, Progress, Reputation). */
+  setCommanderInfo: (info: CommanderInfo | null) => void;
   /** Reset store to initialState (state only; use for init or full reset). */
   reset: () => void;
 }
@@ -183,13 +192,23 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => {
       const existing = state.bodies.find(b => b.bodyId === parsed.bodyId);
       if (existing) {
-        // If incoming is EDSM (id=0) and we have a DB body (id>0), keep DB id, signals, and rawJson
+        // If incoming is EDSM (id=0) and we have a DB body (id>0), keep DB id, signals, rawJson, and scan-related fields (DB has authoritative scan data)
         const merged =
           parsed.id === 0 && existing.id > 0
             ? {
                 ...parsed,
                 id: existing.id,
                 systemId: existing.systemId,
+                subType: parsed.subType || existing.subType,
+                terraformable: existing.terraformable ?? parsed.terraformable,
+                wasDiscovered: existing.wasDiscovered,
+                wasMapped: existing.wasMapped,
+                wasFootfalled: existing.wasFootfalled,
+                discoveredByMe: existing.discoveredByMe,
+                mappedByMe: existing.mappedByMe,
+                footfalledByMe: existing.footfalledByMe,
+                scanType: existing.scanType,
+                scanValue: existing.scanValue,
                 bioSignals: existing.bioSignals,
                 geoSignals: existing.geoSignals,
                 humanSignals: existing.humanSignals,
@@ -212,6 +231,16 @@ export const useAppStore = create<AppState>((set, get) => ({
       bodies: state.bodies.map(b =>
         b.bodyId === bodyId
           ? { ...b, scanType: 'Mapped' as const, mappedByMe: true }
+          : b
+      ),
+    }));
+  },
+
+  updateBodyFootfalled: (bodyId) => {
+    set((state) => ({
+      bodies: state.bodies.map(b =>
+        b.bodyId === bodyId
+          ? { ...b, footfalledByMe: true }
           : b
       ),
     }));
@@ -262,21 +291,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     window.electron.setSettings('showFirstDiscoveryValues', show);
   },
 
-  setBodyScanHighValue: (v) => {
-    set({ bodyScanHighValue: v });
-    window.electron.setSettings('bodyScanHighValue', v);
+  setBioSignalsHighlightThreshold: (v) => {
+    set({ bioSignalsHighlightThreshold: v });
+    window.electron.setSettings('bioSignalsHighlightThreshold', v);
   },
-  setBodyScanMediumValue: (v) => {
-    set({ bodyScanMediumValue: v });
-    window.electron.setSettings('bodyScanMediumValue', v);
-  },
-  setBioHighValue: (v) => {
-    set({ bioHighValue: v });
-    window.electron.setSettings('bioHighValue', v);
-  },
-  setBioMediumValue: (v) => {
-    set({ bioMediumValue: v });
-    window.electron.setSettings('bioMediumValue', v);
+  setPlanetHighlightCriteria: (v) => {
+    set({ planetHighlightCriteria: v });
+    window.electron.setSettings('planetHighlightCriteria', v);
   },
   setDefaultIconZoomIndex: (v) => {
     set({ defaultIconZoomIndex: v });
@@ -456,6 +477,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  setCommanderInfo: (info) => {
+    set({ commanderInfo: info });
+  },
+
   clearEdsmState: () => {
     // Increment request ID to invalidate any pending requests
     edsmRequestCounter++;
@@ -487,6 +512,7 @@ const EMPTY_COLLAPSED_SET = new Set<number>();
 
 export const useEdsmState = () => useAppStore(useShallow((state) => state.edsm));
 export const useEdsmSpoilerFree = () => useAppStore((state) => state.edsmSpoilerFree);
+export const useCommanderInfo = () => useAppStore((state) => state.commanderInfo);
 
 // Collapse state selectors
 export const useCollapsedNodes = (): Set<number> => {

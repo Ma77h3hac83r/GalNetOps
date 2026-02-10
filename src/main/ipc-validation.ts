@@ -12,14 +12,23 @@ const SETTINGS_KEYS = [
   'showFirstDiscoveryValues',
   'windowBounds',
   'hasBackfilled',
-  'bodyScanHighValue',
-  'bodyScanMediumValue',
-  'bioHighValue',
-  'bioMediumValue',
   'defaultIconZoomIndex',
   'defaultTextZoomIndex',
   'edsmSpoilerFree',
+  'bioSignalsHighlightThreshold',
+  'planetHighlightCriteria',
 ] as const;
+
+const planetHighlightRowSchema = z.object({
+  track: z.boolean().optional(),
+  atmosphere: z.boolean().nullable().optional(),
+  landable: z.boolean().nullable().optional(),
+  terraformable: z.boolean().nullable().optional(),
+  geological: z.boolean().nullable().optional(),
+  biological: z.boolean().nullable().optional(),
+});
+
+const planetHighlightCriteriaSchema = z.record(z.string(), planetHighlightRowSchema);
 
 export const settingsKeySchema = z.enum([...SETTINGS_KEYS] as [string, ...string[]]);
 
@@ -35,6 +44,7 @@ export const settingsSetSchema = z.object({
       width: z.number(),
       height: z.number(),
     }).nullable(),
+    planetHighlightCriteriaSchema,
   ]),
 }).strict();
 
@@ -89,11 +99,11 @@ const ALLOWED_EXTERNAL_PROTOCOLS = ['https:', 'http:', 'mailto:'];
  * Returns true if the URL is allowed for shell.openExternal (http, https, mailto only).
  */
 export function isAllowedExternalUrl(url: unknown): boolean {
-  if (typeof url !== 'string' || url.length === 0 || url.length > 2048) return false;
+  if (typeof url !== 'string' || url.length === 0 || url.length > 8192) return false;
   try {
     const parsed = new URL(url);
     return ALLOWED_EXTERNAL_PROTOCOLS.includes(parsed.protocol);
-  } catch {
+  } catch (e: unknown) {
     return false;
   }
 }
@@ -110,7 +120,7 @@ export function sanitizePath(raw: unknown): string | null {
     const normalized = path.normalize(resolved);
     if (normalized.includes('..')) return null;
     return normalized;
-  } catch {
+  } catch (e: unknown) {
     return null;
   }
 }
@@ -125,4 +135,4 @@ export const edsmSearchSystemsSchema = z.object({
 }).strict();
 export const edsmClearCacheSchema = z.object({ type: z.string().max(100).optional() }).strict();
 
-export const appOpenExternalSchema = z.object({ url: z.string().min(1).max(2048) }).strict();
+export const appOpenExternalSchema = z.object({ url: z.string().min(1).max(8192) }).strict();

@@ -1,20 +1,36 @@
-/** Explorer header: system name (copy), coords, EDSM status, discovered/mapped counts, Est. FSS/DSS/Current value, galactic region; includes SystemSearch and optional rightContent (e.g. zoom). */
-import { useState, useMemo } from 'react';
+/** Explorer header: system name (copy), View on EDSM, coords, EDSM status, discovered/mapped counts, Est. FSS/DSS/Current value, galactic region; includes SystemSearch and CommanderInfo. */
+import { useState, useMemo, useCallback } from 'react';
 import type { System } from '@shared/types';
-import { useBodies, useEdsmState } from '../stores/appStore';
+import { useBodies, useEdsmState, useEdsmSpoilerFree } from '../stores/appStore';
 import SystemSearch from './SystemSearch';
+import CommanderInfo from './CommanderInfo';
 import { findGalacticRegion } from '@shared/galacticRegions';
-import { estimateFssValueForBody, estimateDssValueForBody, NO_SCAN_VALUE_BODY_TYPES } from '@shared/constants';
+import { estimateFssValueForBody, estimateDssValueForBody, NO_SCAN_VALUE_BODY_TYPES } from '@shared/scanValueFormulas';
 
 interface SystemHeaderProps {
   system: System | null;
-  rightContent?: React.ReactNode;
 }
 
-function SystemHeader({ system, rightContent }: SystemHeaderProps) {
+function SystemHeader({ system }: SystemHeaderProps) {
   const bodies = useBodies();
   const edsm = useEdsmState();
+  const edsmSpoilerFree = useEdsmSpoilerFree();
   const [copied, setCopied] = useState(false);
+
+  const openEdsmSystemPage = useCallback(async () => {
+    if (!system?.name || !window.electron?.openExternal) return;
+    const nameForUrl = system.name.replace(/ /g, '+');
+    try {
+      const edsmSystem = await window.electron.edsmGetSystem(system.name);
+      const edsmId = edsmSystem && typeof (edsmSystem as { id?: number }).id === 'number' ? (edsmSystem as { id: number }).id : null;
+      const url = edsmId != null
+        ? `https://www.edsm.net/en/system/id/${edsmId}/name/${nameForUrl}`
+        : `https://www.edsm.net/en/system/bodies/name/${encodeURIComponent(system.name)}`;
+      window.electron.openExternal(url);
+    } catch {
+      window.electron.openExternal(`https://www.edsm.net/en/system/bodies/name/${encodeURIComponent(system.name)}`);
+    }
+  }, [system?.name]);
   
   const countableBodies = bodies.filter(b => b.bodyType === 'Star' || b.bodyType === 'Planet' || b.bodyType === 'Moon');
   const scannedCount = countableBodies.filter(b => b.scanType !== 'None').length;
@@ -76,10 +92,11 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
   if (!system) {
     return (
       <div className="px-6 py-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-        <div className="flex items-center justify-center h-16">
+        <div className="flex items-center justify-between h-16">
           <p className="text-slate-400 dark:text-slate-500">
             Waiting for system data...
           </p>
+          <CommanderInfo />
         </div>
       </div>
     );
@@ -95,7 +112,7 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
             <SystemSearch />
           </div>
 
-          {/* Row 2: System name with copy, galactic sector, coordinates */}
+          {/* Row 2: System name with copy, View on EDSM, galactic sector, coordinates */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopySystemName}
@@ -115,6 +132,21 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
               {system.name}
             </h1>
+            {!edsmSpoilerFree && (
+              <button
+                onClick={openEdsmSystemPage}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                title="Open system on EDSM"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                View on EDSM
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-2 mt-1">
             {galacticRegion?.name && (
@@ -160,6 +192,14 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
                   <span className="text-slate-400 dark:text-slate-500">/{effectiveBodyCount}</span>
                 )}
               </div>
+              {effectiveBodyCount != null && effectiveBodyCount > 0 && (
+                <div className="w-24 h-1.5 mt-1 mx-auto rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-accent-500 transition-all duration-300"
+                    style={{ width: `${Math.min(100, Math.round((scannedCount / effectiveBodyCount) * 100))}%` }}
+                  />
+                </div>
+              )}
               {!system.bodyCount && edsm.bodyCount !== null && (
                 <div className="text-[10px] text-blue-500 dark:text-blue-400 mt-0.5">via EDSM</div>
               )}
@@ -172,6 +212,14 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
                   <span className="text-slate-400 dark:text-slate-500">/{mappableCount}</span>
                 )}
               </div>
+              {mappableCount > 0 && (
+                <div className="w-24 h-1.5 mt-1 mx-auto rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-purple-500 transition-all duration-300"
+                    style={{ width: `${Math.min(100, Math.round((mappedCount / mappableCount) * 100))}%` }}
+                  />
+                </div>
+              )}
             </div>
             <div className="text-center">
               <div className="text-sm text-slate-500 dark:text-slate-400">Est. FSS Value</div>
@@ -194,8 +242,10 @@ function SystemHeader({ system, rightContent }: SystemHeaderProps) {
           </div>
         </div>
 
-        {/* Right: Zoom options and legend (from ExplorerView) */}
-        {rightContent && <div className="flex-shrink-0">{rightContent}</div>}
+        {/* Right: Commander info */}
+        <div className="flex-shrink-0">
+          <CommanderInfo />
+        </div>
       </div>
     </div>
   );
